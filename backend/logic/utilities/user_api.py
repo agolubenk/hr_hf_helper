@@ -20,7 +20,7 @@ class UserViewSet(BaseAPIViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
-    search_fields = ['username', 'email', 'first_name', 'last_name', 'full_name']
+    search_fields = ['username', 'email', 'first_name', 'last_name']
     ordering_fields = ['username', 'email', 'date_joined', 'last_login']
     ordering = ['username']
     

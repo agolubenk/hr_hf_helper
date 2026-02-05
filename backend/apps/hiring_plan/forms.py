@@ -24,7 +24,7 @@ class HiringRequestForm(forms.ModelForm):
         model = HiringRequest
         fields = [
             'vacancy', 'grade', 'project', 'priority',
-            'opening_reason', 'opening_date', 'recruiter', 'notes'
+            'opening_reason', 'opening_date', 'recruiter', 'clickup_task_id', 'notes'
         ]
         widgets = {
             'vacancy': forms.Select(attrs={'class': 'form-select'}),
@@ -34,6 +34,7 @@ class HiringRequestForm(forms.ModelForm):
             'opening_reason': forms.Select(attrs={'class': 'form-select'}),
             'opening_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'recruiter': forms.Select(attrs={'class': 'form-select'}),
+            'clickup_task_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Например: 86c7y88xk'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
         labels = {
@@ -44,6 +45,7 @@ class HiringRequestForm(forms.ModelForm):
             'opening_reason': 'Причина открытия',
             'opening_date': 'Дата открытия вакансии',
             'recruiter': 'Рекрутер',
+            'clickup_task_id': 'ID задачи в ClickUp',
             'notes': 'Заметки',
         }
     
@@ -56,6 +58,9 @@ class HiringRequestForm(forms.ModelForm):
         # Ограничиваем выбор только активными грейдами компании
         from apps.company_settings.utils import get_active_grades_queryset
         self.fields['grade'].queryset = get_active_grades_queryset().order_by('name')
+        self.fields['clickup_task_id'].required = False
+        if 'clickup_task_id' in self.fields:
+            self.fields['clickup_task_id'].help_text = 'Связь с задачей в плане найма ClickUp (из карточки задачи или URL).'
     
     def clean_grade(self):
         """Валидация грейда - проверяем, что он является активным для компании"""
@@ -69,12 +74,26 @@ class HiringRequestForm(forms.ModelForm):
                 )
         return grade
 
+    def clean_clickup_task_id(self):
+        value = self.cleaned_data.get('clickup_task_id')
+        if value is not None and isinstance(value, str):
+            value = value.strip() or ''
+        else:
+            value = value or ''
+        if value:
+            if HiringRequest.objects.filter(clickup_task_id=value).exists():
+                raise forms.ValidationError(
+                    'Эта задача ClickUp уже привязана к другой заявке плана найма.'
+                )
+        return value
+
 
 class HiringRequestUpdateForm(forms.ModelForm):
     class Meta:
         model = HiringRequest
         fields = [
-            'opening_date', 'candidate_id', 'candidate_name', 'closed_date', 'hire_date', 'recruiter', 'notes'
+            'opening_date', 'candidate_id', 'candidate_name', 'closed_date', 'hire_date',
+            'recruiter', 'grade', 'project', 'clickup_task_id', 'notes'
         ]
         widgets = {
             'opening_date': DateInput(attrs={'class': 'form-control'}),
@@ -83,6 +102,9 @@ class HiringRequestUpdateForm(forms.ModelForm):
             'closed_date': DateInput(attrs={'class': 'form-control'}),
             'hire_date': DateInput(attrs={'class': 'form-control'}),
             'recruiter': forms.Select(attrs={'class': 'form-select'}),
+            'grade': forms.Select(attrs={'class': 'form-select'}),
+            'project': forms.TextInput(attrs={'class': 'form-control'}),
+            'clickup_task_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Например: 86c7y88xk'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
         labels = {
@@ -92,7 +114,13 @@ class HiringRequestUpdateForm(forms.ModelForm):
             'closed_date': 'Дата закрытия',
             'hire_date': 'Дата выхода специалиста',
             'recruiter': 'Рекрутер',
+            'grade': 'Грейд',
+            'project': 'Проект',
+            'clickup_task_id': 'ID задачи в ClickUp',
             'notes': 'Заметки',
+        }
+        help_texts = {
+            'clickup_task_id': 'Связь с задачей в плане найма ClickUp (из карточки задачи или URL).',
         }
 
     def __init__(self, *args, **kwargs):
@@ -101,6 +129,9 @@ class HiringRequestUpdateForm(forms.ModelForm):
         # Фильтруем только активных пользователей для выбора рекрутера
         self.fields['recruiter'].queryset = User.objects.filter(is_active=True).order_by('first_name', 'last_name')
         self.fields['recruiter'].empty_label = "Выберите рекрутера..."
+        # Грейд — только активные грейды компании
+        from apps.company_settings.utils import get_active_grades_queryset
+        self.fields['grade'].queryset = get_active_grades_queryset().order_by('name')
 
         # Показываем поле opening_date только для планируемых заявок
         if self.instance and self.instance.status != 'planned':
@@ -119,6 +150,20 @@ class HiringRequestUpdateForm(forms.ModelForm):
         self.fields['candidate_name'].widget = forms.TextInput(attrs={'class': 'form-control', 'readonly': True})
         self.fields['candidate_name'].required = False
         self.fields['candidate_name'].help_text = "Заполняется автоматически из Huntflow по ID кандидата"
+
+    def clean_clickup_task_id(self):
+        value = self.cleaned_data.get('clickup_task_id')
+        if value is not None and isinstance(value, str):
+            value = value.strip() or ''
+        else:
+            value = value or ''
+        if value:
+            other = HiringRequest.objects.filter(clickup_task_id=value).exclude(pk=self.instance.pk)
+            if other.exists():
+                raise forms.ValidationError(
+                    'Эта задача ClickUp уже привязана к другой заявке плана найма.'
+                )
+        return value
 
 
 class VacancySLAForm(forms.ModelForm):

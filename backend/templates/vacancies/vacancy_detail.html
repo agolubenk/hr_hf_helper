@@ -60,6 +60,16 @@
                                         <td><strong>Ответственный рекрутер:</strong></td>
                                         <td>{{ vacancy.recruiter.get_full_name|default:vacancy.recruiter.username }}</td>
                                     </tr>
+                                    <tr>
+                                        <td><strong>Дополнительный рекрутер:</strong></td>
+                                        <td>
+                                            {% if vacancy.additional_recruiter %}
+                                                {{ vacancy.additional_recruiter.get_full_name|default:vacancy.additional_recruiter.username }}
+                                            {% else %}
+                                                <span class="text-muted">Не указан</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
                                 </table>
                             </div>
                             <div class="col-md-6">

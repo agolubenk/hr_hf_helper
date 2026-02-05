@@ -1,7 +1,7 @@
 {
   "name": "integrations",
   "type": "page",
-  "description": "Страница управления интеграциями компании. Позволяет настраивать интеграции с внешними сервисами (Huntflow, Google, Telegram, ИИ сервисы и т.д.), управлять их активностью и выбирать режим хранения учетных данных (общий/у каждого свой/оба).\n\n**Путь**: `/company-settings/integrations`",
+  "description": "Страница управления интеграциями компании. Позволяет настраивать интеграции с внешними сервисами (Huntflow, Google, Telegram, ИИ сервисы и т.д.), управлять их активностью и для части интеграций выбирать режим хранения учетных данных (общий/у каждого свой/оба). Для Google выбора режима нет — включение выполняется в профиле, у каждого пользователя своё.\n\n**Путь**: `/company-settings/integrations`",
   "route_path": "`/company-settings/integrations`",
   "documentation_file": "/Users/agolubenko/hrhelper/fullstack/frontend/app/company-settings/integrations/PAGE_DOCUMENTATION.md",
   "mock_data": {},

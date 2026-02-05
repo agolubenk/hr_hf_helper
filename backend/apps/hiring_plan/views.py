@@ -10,7 +10,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 )
@@ -563,6 +563,59 @@ class HiringRequestDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'hiring_request'
 
 
+def _fetch_clickup_task_into_notes(hiring_request, request):
+    """Если у заявки указан clickup_task_id и у пользователя есть API-ключ, подтягивает данные задачи в заметки."""
+    import logging
+    import re
+    raw = (hiring_request.clickup_task_id or '').strip()
+    task_id = raw
+    # Извлекаем ID из URL, если вставлена ссылка (например https://app.clickup.com/t/86c7y88xk)
+    if task_id and ('clickup.com' in task_id or '/t/' in task_id):
+        m = re.search(r'/t/([a-zA-Z0-9_-]+)', task_id)
+        if m:
+            task_id = m.group(1)
+            if task_id != raw:
+                hiring_request.clickup_task_id = task_id
+                hiring_request.save(update_fields=['clickup_task_id'])
+    if not task_id:
+        return
+    api_key = getattr(request.user, 'clickup_api_key', None) or ''
+    if not (api_key and api_key.strip()):
+        messages.warning(
+            request,
+            'Укажите API-токен ClickUp в профиле, чтобы подгружать данные задачи в заметки.'
+        )
+        return
+    try:
+        from apps.clickup_int.services import ClickUpService, ClickUpAPIError
+        from apps.clickup_int.hiring_plan_sync import format_clickup_task_for_notes
+        service = ClickUpService(api_key.strip())
+        task_data = service.get_task(task_id)
+        if task_data:
+            new_block = format_clickup_task_for_notes(task_data)
+            current_notes = hiring_request.notes or ''
+            marker_start = "--- Данные из ClickUp"
+            marker_end = "--- Конец данных ClickUp ---"
+            if marker_start in current_notes and marker_end in current_notes:
+                start_i = current_notes.find(marker_start)
+                end_i = current_notes.find(marker_end) + len(marker_end)
+                before = current_notes[:start_i].rstrip()
+                after = current_notes[end_i:].lstrip()
+                hiring_request.notes = "\n\n".join(filter(None, [before, new_block, after]))
+            else:
+                hiring_request.notes = (current_notes.rstrip() + "\n\n" + new_block).strip()
+            hiring_request.save(update_fields=['notes'])
+            messages.info(request, 'Данные из задачи ClickUp добавлены в заметки.')
+        else:
+            messages.warning(request, 'Задача в ClickUp не найдена. Проверьте ID задачи.')
+    except ClickUpAPIError as e:
+        logging.getLogger(__name__).warning('ClickUp при подтягивании в заметки: %s', e)
+        messages.warning(request, f'ClickUp: {str(e)}')
+    except Exception as e:
+        logging.getLogger(__name__).exception('Ошибка подтягивания данных ClickUp в заметки')
+        messages.warning(request, f'Не удалось загрузить данные из ClickUp: {str(e)}')
+
+
 class HiringRequestCreateView(LoginRequiredMixin, CreateView):
     """Создание заявки"""
     model = HiringRequest
@@ -582,6 +635,9 @@ class HiringRequestCreateView(LoginRequiredMixin, CreateView):
         
         # Синхронизируем рекрутера с вакансией
         self.object.sync_recruiter_with_vacancy()
+        
+        # Подтягиваем данные из задачи ClickUp в заметки, если указан clickup_task_id
+        _fetch_clickup_task_into_notes(self.object, self.request)
         
         # Если есть candidate_id, пытаемся получить данные кандидата из Huntflow
         if self.object.candidate_id:
@@ -676,6 +732,9 @@ class HiringRequestUpdateView(LoginRequiredMixin, UpdateView):
                     messages.info(self.request, 'Данные кандидата проверены в Huntflow, но новых данных не найдено')
             else:
                 messages.warning(self.request, 'Не удалось получить данные кандидата из Huntflow. Проверьте ID кандидата.')
+
+        # Если указана связь с задачей ClickUp — подтягиваем данные задачи в заметки
+        _fetch_clickup_task_into_notes(self.object, self.request)
         
         messages.success(self.request, f'Заявка "{self.object}" успешно обновлена!')
         return response
@@ -1559,3 +1618,49 @@ def yearly_hiring_plan_export_excel(request):
     return resp
 
 
+@login_required
+@require_http_methods(['GET'])
+def hiring_requests_export_json(request):
+    """Скачивание заявок и SLA в виде JSON-файла."""
+    from .export_import import export_hiring_requests_json
+    data = export_hiring_requests_json()
+    response = HttpResponse(
+        json.dumps(data, ensure_ascii=False, indent=2),
+        content_type='application/json; charset=utf-8'
+    )
+    filename = f'hiring_requests_export_{timezone.now().strftime("%Y%m%d_%H%M")}.json'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
+
+
+@login_required
+@require_http_methods(['POST'])
+def hiring_requests_import_json(request):
+    """Импорт заявок и SLA из загруженного JSON-файла."""
+    from .export_import import import_hiring_requests_json
+
+    if not request.FILES.get('json_file'):
+        messages.error(request, 'Выберите JSON-файл для импорта.')
+        return redirect('hiring_plan:hiring_requests_list')
+
+    try:
+        raw = request.FILES['json_file'].read().decode('utf-8')
+        data = json.loads(raw)
+    except (UnicodeDecodeError, json.JSONDecodeError) as e:
+        messages.error(request, f'Неверный формат JSON: {e}')
+        return redirect('hiring_plan:hiring_requests_list')
+
+    sla_created, sla_updated, req_created, errors = import_hiring_requests_json(data)
+    if errors:
+        for err in errors[:10]:
+            messages.warning(request, err)
+        if len(errors) > 10:
+            messages.warning(request, f'... и ещё {len(errors) - 10} ошибок.')
+    if sla_created or sla_updated or req_created:
+        messages.success(
+            request,
+            f'Импорт завершён: SLA создано {sla_created}, обновлено {sla_updated}; заявок создано {req_created}.'
+        )
+    elif not errors:
+        messages.info(request, 'Нет данных для импорта.')
+    return redirect('hiring_plan:hiring_requests_list')

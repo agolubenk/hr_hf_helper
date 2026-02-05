@@ -191,7 +191,13 @@
                         <i class="fas fa-users me-2"></i>
                         Заявки на найм
                     </h5>
-                            <div class="btn-group" role="group">
+                            <div class="btn-group flex-wrap gap-2" role="group">
+                                <a href="{% url 'hiring_plan:hiring_requests_export_json' %}" class="btn btn-outline-success btn-sm" title="Скачать заявки и SLA в JSON">
+                                    <i class="fas fa-download me-2"></i>Экспорт в JSON
+                                </a>
+                                <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#importHiringRequestsJsonModal" title="Загрузить заявки и SLA из JSON">
+                                    <i class="fas fa-upload me-2"></i>Импорт из JSON
+                                </button>
                                 <a href="{% url 'hiring_plan:hiring_request_create' %}" class="btn btn-primary">
                                     <i class="fas fa-plus me-2"></i>Создать заявку
                                 </a>
@@ -205,6 +211,32 @@
                                     <i class="fas fa-clock me-2"></i>Управление SLA
                                 </a>
                             </div>
+                        </div>
+            </div>
+
+            <!-- Модальное окно импорта заявок из JSON -->
+            <div class="modal fade" id="importHiringRequestsJsonModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><i class="fas fa-upload me-2"></i>Импорт заявок и SLA из JSON</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form method="post" action="{% url 'hiring_plan:hiring_requests_import_json' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="modal-body">
+                                <p class="text-muted small">Выберите JSON-файл, полученный при экспорте. Вакансии и грейды должны существовать. SLA обновляются по паре вакансия+грейд; заявки добавляются новыми записями.</p>
+                                <div class="mb-3">
+                                    <label for="id_hiring_json_file" class="form-label">Файл JSON</label>
+                                    <input type="file" name="json_file" id="id_hiring_json_file" class="form-control" accept=".json,application/json" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-upload me-1"></i>Загрузить</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
@@ -530,6 +562,13 @@
                                            class="btn btn-outline-warning" title="Редактировать">
                                             <i class="fas fa-edit"></i>
                                         </a>
+                                        {% if request.clickup_task_id %}
+                                        <a href="https://app.clickup.com/t/{{ request.clickup_task_id }}" 
+                                           target="_blank" rel="noopener"
+                                           class="btn btn-outline-info" title="Задача в ClickUp">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>

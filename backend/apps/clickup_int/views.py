@@ -19,7 +19,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from .models import ClickUpSettings, ClickUpTask, ClickUpSyncLog, ClickUpBulkImport
+from .models import ClickUpSettings, ClickUpTask, ClickUpSyncLog, ClickUpBulkImport, ClickUpHiringRequest
 from .forms import ClickUpSettingsForm, ClickUpTestConnectionForm, ClickUpPathForm
 from .services import ClickUpService, ClickUpCacheService, ClickUpAPIError
 
@@ -331,6 +331,120 @@ def get_folders(request):
             'success': False,
             'message': f'Ошибка: {str(e)}'
         })
+
+
+@login_required
+def hiring_plan_from_clickup(request):
+    """Страница «План найма»: выбор папки ClickUp и вытягивание данных из неё."""
+    user = request.user
+    if not getattr(user, 'clickup_api_key', None):
+        messages.warning(request, 'Настройте API-токен ClickUp в профиле.')
+        return redirect('clickup_int:dashboard')
+    settings_obj = ClickUpSettings.objects.filter(user=user).first()
+    if not settings_obj:
+        settings_obj = ClickUpSettings.get_or_create_for_user(user)
+    context = {
+        'settings': settings_obj,
+        'team_id': getattr(settings_obj, 'team_id', '') or '',
+        'space_id': getattr(settings_obj, 'hiring_plan_space_id', '') or getattr(settings_obj, 'space_id', '') or '',
+        'folder_id': getattr(settings_obj, 'hiring_plan_folder_id', '') or '',
+        'folder_data': None,
+    }
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        space_id = (request.POST.get('space_id') or '').strip()
+        # ID папки: из ручного ввода (Shared with me) или из выбора по команде/пространству
+        folder_id = (request.POST.get('folder_id_manual') or request.POST.get('folder_id') or '').strip()
+        if action == 'save_folder':
+            if folder_id:
+                settings_obj.hiring_plan_folder_id = folder_id
+                settings_obj.hiring_plan_space_id = space_id or None
+                settings_obj.save(update_fields=['hiring_plan_folder_id', 'hiring_plan_space_id'])
+                messages.success(request, 'Папка для плана найма сохранена.')
+            context['folder_id'] = folder_id
+            context['space_id'] = space_id
+        elif action == 'pull' and folder_id:
+            try:
+                service = ClickUpService(user.clickup_api_key)
+                context['folder_data'] = service.get_folder_data(folder_id)
+                from .hiring_plan_sync import sync_folder_to_hiring_requests
+                created, updated = sync_folder_to_hiring_requests(user, context['folder_data'], service, fetch_full_task=True)
+                messages.success(
+                    request,
+                    f'Данные из папки загружены. Сохранено заявок: создано {created}, обновлено {updated}.'
+                )
+            except ClickUpAPIError as e:
+                messages.error(request, str(e))
+            except Exception as e:
+                logger.exception('Ошибка вытягивания данных папки')
+                messages.error(request, f'Ошибка: {e}')
+            context['folder_id'] = folder_id
+            context['space_id'] = space_id
+    return render(request, 'clickup_int/hiring_plan_from_clickup.html', context)
+
+
+@login_required
+def hiring_plan_requests_list(request):
+    """Список сохранённых заявок плана найма (из папки ClickUp). Не показываем заявки, уже привязанные к заявкам основного плана найма."""
+    user = request.user
+    from apps.hiring_plan.models import HiringRequest
+    linked_task_ids = list(
+        HiringRequest.objects.exclude(clickup_task_id__isnull=True)
+        .exclude(clickup_task_id='')
+        .values_list('clickup_task_id', flat=True)
+    )
+    linked_task_ids = [tid.strip() for tid in linked_task_ids if tid]
+    qs = ClickUpHiringRequest.objects.filter(user=user).select_related('recruiter')
+    if linked_task_ids:
+        qs = qs.exclude(clickup_task_id__in=linked_task_ids)
+    folder_id = request.GET.get('folder_id', '').strip()
+    if folder_id:
+        qs = qs.filter(folder_id=folder_id)
+    request_type = request.GET.get('request_type', '').strip()
+    if request_type in ('hiring', 'transfer', 'group', 'unknown'):
+        qs = qs.filter(request_type=request_type)
+    total_count = qs.count()
+    qs = qs.order_by('-date_updated', '-synced_at')
+    paginator = Paginator(qs, 20)
+    page_obj = paginator.get_page(request.GET.get('page'))
+    context = {
+        'page_obj': page_obj,
+        'folder_id': folder_id,
+        'request_type': request_type,
+        'total_count': total_count,
+    }
+    return render(request, 'clickup_int/hiring_plan_requests_list.html', context)
+
+
+@login_required
+def hiring_plan_request_detail(request, pk):
+    """Детальный просмотр заявки плана найма (группа или таска)."""
+    user = request.user
+    req = get_object_or_404(ClickUpHiringRequest.objects.select_related('recruiter'), pk=pk, user=user)
+    context = {'req': req}
+    return render(request, 'clickup_int/hiring_plan_request_detail.html', context)
+
+
+@login_required
+@require_http_methods(['POST'])
+def api_pull_folder_data(request):
+    """API: вытянуть данные из папки ClickUp (JSON)."""
+    user = request.user
+    if not getattr(user, 'clickup_api_key', None):
+        return JsonResponse({'success': False, 'message': 'API токен ClickUp не настроен'})
+    data = json.loads(request.body) if request.body else {}
+    folder_id = (data.get('folder_id') or '').strip()
+    if not folder_id:
+        return JsonResponse({'success': False, 'message': 'Укажите folder_id'})
+    try:
+        service = ClickUpService(user.clickup_api_key)
+        folder_data = service.get_folder_data(folder_id)
+        return JsonResponse({'success': True, 'data': folder_data})
+    except ClickUpAPIError as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+    except Exception as e:
+        logger.exception('Pull folder data error')
+        return JsonResponse({'success': False, 'message': str(e)})
 
 
 @login_required

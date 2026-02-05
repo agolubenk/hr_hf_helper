@@ -6,6 +6,9 @@ app_name = 'clickup_int'
 urlpatterns = [
     # Основные страницы
     path('', views.dashboard, name='dashboard'),
+    path('hiring-plan/', views.hiring_plan_from_clickup, name='hiring_plan_from_clickup'),
+    path('hiring-plan/requests/', views.hiring_plan_requests_list, name='hiring_plan_requests_list'),
+    path('hiring-plan/requests/<int:pk>/', views.hiring_plan_request_detail, name='hiring_plan_request_detail'),
     path('settings/', views.settings_view, name='settings'),
     path('tasks/', views.tasks_list, name='tasks_list'),
     path('task/<str:task_id>/', views.task_detail, name='task_detail'),
@@ -30,4 +33,5 @@ urlpatterns = [
     path('api/retry-failed-tasks/<int:import_id>/', views.retry_failed_tasks_view, name='retry_failed_tasks'),
     path('api/debug-task-tags/<str:task_id>/', views.debug_task_tags, name='debug_task_tags'),
     path('api/force-add-huntflow-tag/<str:task_id>/', views.force_add_huntflow_tag, name='force_add_huntflow_tag'),
+    path('api/pull-folder-data/', views.api_pull_folder_data, name='api_pull_folder_data'),
 ]

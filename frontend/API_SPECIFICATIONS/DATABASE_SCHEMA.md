@@ -129,6 +129,12 @@ CREATE INDEX idx_vacancies_department_id ON vacancies(department_id);
 CREATE INDEX idx_vacancies_created_at ON vacancies(created_at);
 ```
 
+**Примечания:**
+- Основная информация о вакансии
+- Детальные настройки вакансии (текст, вопросы, ссылки) хранятся в связанных таблицах
+- Настройки текста вакансии по странам хранятся в `vacancy_text_by_country`
+- Активность вакансии по странам хранится в `vacancy_activity_by_country`
+
 ### 1.6 vacancy_recruiters (Назначенные рекрутеры на вакансию)
 
 ```sql
@@ -232,12 +238,16 @@ CREATE TABLE recruiting_stages (
     lifecycle_stage_id UUID NOT NULL REFERENCES lifecycle_stages(id) ON DELETE CASCADE,
     color VARCHAR(7), -- HEX цвет для UI (настраивается на /company-settings/recruiting/stages)
     description TEXT, -- Подробное описание этапа (настраивается на /company-settings/recruiting/stages)
+    is_meeting BOOLEAN DEFAULT false, -- Метка "встреча" - этап используется в тогглере на странице /workflow и /recr-chat
+    show_offices BOOLEAN DEFAULT false, -- Отображать офисы для этапа-встречи (да/нет)
+    show_interviewers BOOLEAN DEFAULT false, -- Отображать интервьюеров для этапа-встречи (да/нет)
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
     UNIQUE(lifecycle_stage_id)
 );
 
 CREATE INDEX idx_recruiting_stages_lifecycle_stage_id ON recruiting_stages(lifecycle_stage_id);
+CREATE INDEX idx_recruiting_stages_is_meeting ON recruiting_stages(is_meeting) WHERE is_meeting = true;
 ```
 
 **Примечания:**
@@ -247,6 +257,45 @@ CREATE INDEX idx_recruiting_stages_lifecycle_stage_id ON recruiting_stages(lifec
   - Цвет (для визуального отображения в UI)
   - Описание этапа
   - Доступные причины отказа (связь с rejection_reasons)
+  - **Метка "встреча" (`is_meeting`)**: если true, этап используется в тогглере на странице `/workflow` и `/recr-chat`
+  - **Отображать офисы (`show_offices`)**: если true, в панели настроек встречи будет выбор формата (Онлайн/Офис) и выбор офиса при выборе "Офис". Если false, по определению используется только онлайн
+  - **Отображать интервьюеров (`show_interviewers`)**: если true, в панели настроек встречи будет выбор интервьюеров
+- Этапы с `is_meeting = true` используются для формирования динамических кнопок тогглера этапов процесса
+- Названия этапов-встреч становятся названиями кнопок в тогглере
+- Количество кнопок в тогглере: 0 и более (зависит от количества этапов с `is_meeting = true`)
+
+### 1.11 recruiting_commands (Команды рекрутинга для workflow чата)
+
+```sql
+CREATE TABLE recruiting_commands (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+    command VARCHAR(50) NOT NULL, -- Текст команды (например, "/s", "/t", "/in")
+    command_type VARCHAR(20) NOT NULL, -- 'analysis' (анализ) или 'event' (событие)
+    stage_id UUID NOT NULL REFERENCES lifecycle_stages(id), -- ID этапа найма (обязательно)
+    allow_any_layout BOOLEAN DEFAULT false, -- Разрешить работу команды в любой раскладке клавиатуры
+    color VARCHAR(7) NOT NULL, -- HEX цвет для отображения в чате
+    description TEXT, -- Описание команды
+    order_index INTEGER DEFAULT 0, -- Порядок отображения
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(company_id, command) -- Команда должна быть уникальной в рамках компании
+);
+
+CREATE INDEX idx_recruiting_commands_company_id ON recruiting_commands(company_id);
+CREATE INDEX idx_recruiting_commands_stage_id ON recruiting_commands(stage_id);
+CREATE INDEX idx_recruiting_commands_command ON recruiting_commands(company_id, command);
+```
+
+**Примечания:**
+- Команды используются в workflow чате для создания различных действий
+- Настраиваются на странице `/company-settings/recruiting/commands`
+- Команда должна начинаться с "/"
+- Команда должна быть уникальной в рамках компании
+- При включенном `allow_any_layout = true` проверяется уникальность команды с учетом обеих раскладок клавиатуры (русская/английская)
+- `stage_id` обязателен - команда должна быть связана с этапом найма
+- Системные команды `/add` и `/del` не хранятся в базе (обрабатываются системой)
+- Тип команды определяет поведение: `analysis` - анализ кандидата, `event` - создание события (скрининг, интервью)
 
 ### 1.11 stage_transitions (Переходы между этапами)
 
@@ -464,7 +513,89 @@ CREATE INDEX idx_files_user_id ON files(user_id);
 CREATE INDEX idx_files_entity ON files(entity_type, entity_id);
 ```
 
-### 1.18 audit_logs (Логи аудита)
+### 1.18 vacancy_text_by_country (Текст вакансии по странам)
+
+```sql
+CREATE TABLE vacancy_text_by_country (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    vacancy_id UUID NOT NULL REFERENCES vacancies(id) ON DELETE CASCADE,
+    country_code VARCHAR(10) NOT NULL, -- Код страны ('by', 'pl', и т.д.)
+    title VARCHAR(255),
+    department VARCHAR(255),
+    header TEXT,
+    responsibilities TEXT,
+    requirements TEXT,
+    nice_to_have TEXT,
+    conditions TEXT,
+    closing TEXT,
+    link TEXT,
+    field_settings JSONB, -- Настройки полей: {field_name: {active: boolean, visible: boolean}}
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(vacancy_id, country_code)
+);
+
+CREATE INDEX idx_vacancy_text_by_country_vacancy_id ON vacancy_text_by_country(vacancy_id);
+CREATE INDEX idx_vacancy_text_by_country_country_code ON vacancy_text_by_country(country_code);
+```
+
+**Примечания:**
+- Хранит текст вакансии для каждой страны отдельно
+- Позволяет настраивать вакансию независимо для разных стран
+- `field_settings` содержит настройки активности и видимости для каждого поля
+- Используется на страницах `/recr-chat` и в модальных окнах редактирования вакансии
+
+### 1.19 vacancy_activity_by_country (Активность вакансии по странам)
+
+```sql
+CREATE TABLE vacancy_activity_by_country (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    vacancy_id UUID NOT NULL REFERENCES vacancies(id) ON DELETE CASCADE,
+    country_code VARCHAR(10) NOT NULL, -- Код страны ('by', 'pl', и т.д.)
+    is_active BOOLEAN DEFAULT true, -- Активна ли вакансия для этой страны
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(vacancy_id, country_code)
+);
+
+CREATE INDEX idx_vacancy_activity_by_country_vacancy_id ON vacancy_activity_by_country(vacancy_id);
+CREATE INDEX idx_vacancy_activity_by_country_country_code ON vacancy_activity_by_country(country_code);
+```
+
+**Примечания:**
+- Управляет активностью вакансии для каждой страны
+- Если `is_active = false`, все поля вакансии для этой страны становятся неактивными
+- Автоматически влияет на активность в разделе "Вопросы и ссылки" для соответствующей страны
+
+### 1.20 vacancy_questions_by_office (Вопросы и ссылки вакансии по офисам)
+
+```sql
+CREATE TABLE vacancy_questions_by_office (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    vacancy_id UUID NOT NULL REFERENCES vacancies(id) ON DELETE CASCADE,
+    office_id VARCHAR(50) NOT NULL, -- ID офиса ('by', 'pl', и т.д.)
+    vacancy_link TEXT, -- Ссылка на вакансию
+    use_on_site BOOLEAN DEFAULT false, -- Использовать ссылку на сайте
+    link_color VARCHAR(7), -- Цвет ссылки (hex)
+    question_text TEXT, -- Текст вопроса
+    question_color VARCHAR(7), -- Цвет вопроса (hex)
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(vacancy_id, office_id)
+);
+
+CREATE INDEX idx_vacancy_questions_by_office_vacancy_id ON vacancy_questions_by_office(vacancy_id);
+CREATE INDEX idx_vacancy_questions_by_office_office_id ON vacancy_questions_by_office(office_id);
+```
+
+**Примечания:**
+- Хранит настройки "Вопросы и ссылки" для каждого офиса отдельно
+- Активность автоматически синхронизируется с `vacancy_activity_by_country` (если вакансия неактивна для страны, все поля офиса становятся неактивными)
+- Если вакансия неактивна для страны, все поля становятся неактивными
+- Связь офисов со странами: офис 'by' соответствует стране 'by', офис 'pl' соответствует стране 'pl', и т.д.
+- При изменении `is_active` в `vacancy_activity_by_country` для страны, автоматически обновляется активность всех полей в `vacancy_questions_by_office` для соответствующего офиса
+
+### 1.21 audit_logs (Логи аудита)
 
 ```sql
 CREATE TABLE audit_logs (
@@ -508,6 +639,11 @@ lifecycle_stages N:1 lifecycle_blocks
 lifecycle_stages N:1 companies
 recruiting_stages N:1 lifecycle_stages
 rejection_reasons N:1 recruiting_stages
+recruiting_commands N:1 companies
+recruiting_commands N:1 lifecycle_stages (stage_id)
+vacancy_text_by_country N:1 vacancies
+vacancy_activity_by_country N:1 vacancies
+vacancy_questions_by_office N:1 vacancies
 
 stage_transitions N:1 candidates
 stage_transitions N:1 lifecycle_stages (from)
@@ -620,8 +756,84 @@ YYYYMMDD_HHMMSS_description.sql
 - **Хранение:** 30 дней полных бэкапов, 7 дней инкрементальных
 - **Тестирование восстановления:** Еженедельно
 
+## 7. Новые таблицы (обновления)
+
+### 7.1 Изменения в существующих таблицах
+
+**recruiting_stages:**
+- Добавлены поля: `is_meeting`, `show_offices`, `show_interviewers`
+- Индекс на `is_meeting` для быстрого поиска этапов-встреч
+
+**vacancies:**
+- Основная информация остается в таблице `vacancies`
+- Детальные настройки по странам вынесены в отдельные таблицы
+
+### 7.2 Новые таблицы
+
+**recruiting_commands:**
+- Хранит команды для workflow чата
+- Связь с этапами найма через `stage_id` (обязательно)
+- Поддержка работы в любой раскладке клавиатуры
+
+**vacancy_text_by_country:**
+- Хранит текст вакансии для каждой страны отдельно
+- Позволяет настраивать вакансию независимо для разных стран
+- Настройки полей (активность, видимость) хранятся в JSONB
+
+**vacancy_activity_by_country:**
+- Управляет активностью вакансии для каждой страны
+- Влияет на активность полей в других разделах
+
+**vacancy_questions_by_office:**
+- Хранит настройки "Вопросы и ссылки" для каждого офиса
+- Автоматически синхронизируется с активностью вакансии по странам
+
+### 7.3 Настройки профиля пользователя
+
+Настройки, управляемые со страницы профиля (`/account/profile`), могут храниться в расширении таблицы `users` или в отдельной таблице.
+
+**Вариант 1 — колонка `settings` в `users` (JSONB):**
+
+```sql
+ALTER TABLE users ADD COLUMN IF NOT EXISTS settings JSONB DEFAULT '{}';
+
+-- Пример содержимого:
+-- {
+--   "light_theme_accent_color": "blue",
+--   "dark_theme_accent_color": "indigo",
+--   "quick_buttons": [{"id": "...", "name": "...", "icon": "...", "type": "link"|"text"|"datetime", "value": "...", "order": 0}],
+--   "integrations": { "huntflow": {"configured": true}, "telegram": {"configured": false} }
+-- }
+```
+
+**Вариант 2 — отдельная таблица `user_settings` (ключ-значение):**
+
+```sql
+CREATE TABLE user_settings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    key VARCHAR(100) NOT NULL,
+    value JSONB NOT NULL,
+    updated_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(user_id, key)
+);
+CREATE INDEX idx_user_settings_user_id ON user_settings(user_id);
+```
+
+**Использование:**
+
+- **Тема (акцентный цвет):** `light_theme_accent_color`, `dark_theme_accent_color` — используются на странице профиля (вкладка «Редактирование») и в `ThemeProvider`. API: `PUT /api/user/theme`.
+- **Быстрые кнопки:** массив объектов (id, name, icon, color, type, value, order) — настраиваются на вкладке «Быстрые кнопки», отображаются в `FloatingActions`. API: `GET/PUT /api/user/quick-buttons`. До реализации API могут храниться только на клиенте (localStorage).
+- **Интеграции:** ключи и токены хранятся зашифрованно; в БД или в отдельном хранилище секретов. Статус интеграций возвращается через `GET /api/user/integrations/status`.
+
+**Связь с другими документами:**
+
+- Логика страницы профиля, вкладок и API — [BUSINESS_LOGIC.md](./BUSINESS_LOGIC.md) (раздел 10.26).
+- Интеграции в профиле — [INTEGRATIONS.md](./INTEGRATIONS.md) (раздел 5).
+- Аутентификация и доступ к профилю — [AUTHENTICATION_AUTHORIZATION.md](./AUTHENTICATION_AUTHORIZATION.md).
+
 ---
 
-**Версия:** 1.0.0  
+**Версия:** 2.0.0  
 **Последнее обновление:** 2026-01-28  
 **Автор:** HR Helper Development Team

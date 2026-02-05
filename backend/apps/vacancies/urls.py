@@ -28,4 +28,11 @@ urlpatterns = [
     
     # AJAX операции для зарплатных вилок
     path('salary-ranges/<int:pk>/toggle-active/', views.salary_range_toggle_active, name='salary_range_toggle_active'),
+    # Экспорт/импорт зарплатных вилок (JSON)
+    path('salary-ranges/export-json/', views.salary_ranges_export_json, name='salary_ranges_export_json'),
+    path('salary-ranges/import-json/', views.salary_ranges_import_json, name='salary_ranges_import_json'),
+
+    # Экспорт/импорт вакансий (JSON)
+    path('list/export-json/', views.vacancies_export_json, name='vacancies_export_json'),
+    path('list/import-json/', views.vacancies_import_json, name='vacancies_import_json'),
 ]

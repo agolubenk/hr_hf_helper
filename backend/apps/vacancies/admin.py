@@ -35,7 +35,7 @@ class VacancyAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Блок 1: Основная информация', {
-            'fields': ('name', 'external_id', 'recruiter', 'technologies', 'is_active')
+            'fields': ('name', 'external_id', 'recruiter', 'additional_recruiter', 'technologies', 'is_active')
         }),
         ('Блок 2: Этапы для перевода кандидатов', {
             'fields': (

@@ -21,11 +21,12 @@ class UserSerializer(serializers.ModelSerializer):
     """Основной сериализатор пользователя"""
     groups = GroupSerializer(many=True, read_only=True)
     groups_display = serializers.SerializerMethodField()
+    full_name = serializers.SerializerMethodField()
     is_admin = serializers.SerializerMethodField()
     is_recruiter = serializers.SerializerMethodField()
     is_interviewer = serializers.SerializerMethodField()
     is_observer = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = User
         fields = [
@@ -50,7 +51,10 @@ class UserSerializer(serializers.ModelSerializer):
     
     def get_groups_display(self, obj):
         return [group.name for group in obj.groups.all()]
-    
+
+    def get_full_name(self, obj):
+        return obj.get_full_name() or ''
+
     def get_is_admin(self, obj):
         return obj.is_admin
     
@@ -91,7 +95,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'username', 'email', 'first_name', 'last_name', 'full_name',
+            'username', 'email', 'first_name', 'last_name',
             'telegram_username', 'password', 'password_confirm',
             'gemini_api_key', 'clickup_api_key', 'notion_integration_token',
             'huntflow_prod_url',
@@ -119,11 +123,12 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     """Сериализатор для профиля пользователя (без чувствительных данных)"""
     groups_display = serializers.SerializerMethodField()
+    full_name = serializers.SerializerMethodField()
     is_admin = serializers.ReadOnlyField()
     is_recruiter = serializers.ReadOnlyField()
     is_interviewer = serializers.ReadOnlyField()
     is_observer = serializers.ReadOnlyField()
-    
+
     class Meta:
         model = User
         fields = [
@@ -138,6 +143,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
     def get_groups_display(self, obj):
         return [group.name for group in obj.groups.all()]
+
+    def get_full_name(self, obj):
+        return obj.get_full_name() or ''
 
 
 class UserChangePasswordSerializer(serializers.Serializer):

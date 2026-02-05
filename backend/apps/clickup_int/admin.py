@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import ClickUpSettings, ClickUpTask, ClickUpSyncLog, ClickUpBulkImport
+from .models import ClickUpSettings, ClickUpTask, ClickUpSyncLog, ClickUpBulkImport, ClickUpHiringRequest
 
 
 @admin.register(ClickUpSettings)
@@ -25,6 +25,10 @@ class ClickUpSettingsAdmin(admin.ModelAdmin):
         ('Настройки синхронизации', {
             'fields': ('auto_sync', 'sync_interval', 'huntflow_filter'),
             'description': 'Настройки автоматической синхронизации'
+        }),
+        ('План найма', {
+            'fields': ('hiring_plan_folder_id', 'hiring_plan_space_id'),
+            'description': 'Папка ClickUp для вытягивания заявок плана найма (Shared with me и т.п.)'
         }),
         ('Метаданные', {
             'fields': ('created_at', 'updated_at', 'last_sync_at'),
@@ -201,3 +205,28 @@ class ClickUpBulkImportAdmin(admin.ModelAdmin):
         return format_html(result)
     failed_task_ids_display.short_description = 'Неудачные задачи'
     failed_task_ids_display.allow_tags = True
+
+
+@admin.register(ClickUpHiringRequest)
+class ClickUpHiringRequestAdmin(admin.ModelAdmin):
+    list_display = ['name', 'clickup_task_id', 'user', 'request_type', 'clickup_status', 'list_name', 'recruiter', 'department', 'date_updated', 'synced_at']
+    list_filter = ['request_type', 'user', 'folder_id', 'synced_at']
+    search_fields = ['name', 'clickup_task_id', 'list_name', 'department', 'user__username']
+    readonly_fields = ['clickup_task_id', 'synced_at', 'raw_task', 'custom_fields', 'assignees', 'creator']
+    list_select_related = ['user', 'recruiter']
+    
+    fieldsets = (
+        ('Заявка', {
+            'fields': ('user', 'clickup_task_id', 'name', 'request_type', 'clickup_status', 'normalized_status')
+        }),
+        ('Контекст', {
+            'fields': ('list_id', 'list_name', 'folder_id', 'recruiter', 'department')
+        }),
+        ('Даты', {
+            'fields': ('date_created', 'date_updated', 'start_date', 'due_date', 'synced_at')
+        }),
+        ('Сырые данные', {
+            'fields': ('assignees', 'creator', 'custom_fields', 'raw_task'),
+            'classes': ('collapse',)
+        }),
+    )

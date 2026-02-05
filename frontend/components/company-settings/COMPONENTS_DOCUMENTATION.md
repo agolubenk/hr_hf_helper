@@ -412,14 +412,69 @@
 - **Файл**: `GroupAccessModal.tsx`
 - **Назначение**: Модальное окно управления доступом группы пользователей
 - **Пропсы**:
-  - `groupId`: ID группы (string)
-  - `isOpen`: флаг открытости (boolean)
-  - `onClose`: обработчик закрытия (() => void)
+  - `open`: флаг открытости модального окна (boolean)
+  - `onOpenChange`: обработчик изменения состояния открытости ((open: boolean) => void)
+  - `groupName`: название группы пользователей для отображения в заголовке (string)
+  - `initialApplications`: начальный список доступных приложений (string[], опционально)
+  - `initialAccess`: начальные права доступа к модулям приложения (AccessRights | undefined)
+  - `initialATSAccess`: начальные детальные права доступа для ATS (ATSAccessRights, опционально)
+  - `initialRecruitingSettingsAccess`: начальные детальные права доступа для настроек рекрутинга (RecruitingSettingsAccessRights, опционально)
+  - `onApply`: обработчик применения изменений ((applications: string[], access: AccessRights, atsAccess?: ATSAccessRights, recruitingSettingsAccess?: RecruitingSettingsAccessRights) => void)
 - **Функциональность**: 
-  - Аналогично UserAccessModal, но для групп пользователей
-  - Управление доступом группы к модулям и приложениям
+  - Управление доступными приложениями/интеграциями для группы
+  - Настройка прав доступа к модулям приложения (просмотр/редактирование)
+  - Детальная настройка прав доступа для ATS (блок Рекрутинг):
+    - Условия оффера (просмотр/редактирование)
+    - Условия ЗП (просмотр/редактирование)
+    - Дополнительные поля (просмотр/редактирование)
+    - Соцсети и мессенджеры (просмотр/редактирование)
+    - Метки (просмотр/редактирование)
+    - История (просмотр/редактирование)
+    - Источник (просмотр/редактирование)
+    - Статусы (просмотр/изменение)
+    - Комментарии (просмотр/комментирование)
+  - Детальная настройка прав доступа для настроек рекрутинга:
+    - Правила привлечения (просмотр/редактирование)
+    - Этапы найма и причины отказа (просмотр/редактирование)
+    - Команды workflow (просмотр/редактирование)
+    - Дополнительные поля кандидатов (просмотр/редактирование)
+    - Scorecard (просмотр/редактирование)
+    - SLA (просмотр/редактирование)
+    - Единый промпт для вакансий (просмотр/редактирование)
+    - Шаблон оффера (просмотр/редактирование)
+    - Ответы кандидатам (просмотр/редактирование)
+  - Автоматическое включение просмотра при включении редактирования
+  - Автоматическое раскрытие детальных настроек при наличии доступа к соответствующему модулю
+- **Состояние компонента**:
+  - `applications`: массив идентификаторов доступных приложений
+  - `access`: права доступа к модулям приложения (AccessRights)
+  - `atsAccess`: детальные права доступа для ATS (ATSAccessRights)
+  - `recruitingSettingsAccess`: детальные права доступа для настроек рекрутинга (RecruitingSettingsAccessRights)
+  - `showATSAccess`: флаг отображения детальных настроек ATS
+  - `showRecruitingSettingsAccess`: флаг отображения детальных настроек рекрутинга
+- **Обработчики событий**:
+  - `toggleApplication`: переключение доступности приложения для группы
+  - `setNode`: установка права доступа для модуля
+  - `handleApply`: применение изменений и закрытие модального окна
+  - `setATSAccessField`: установка значения поля детальных прав доступа для ATS с автоматическим включением просмотра
+  - `setRecruitingSettingsAccessField`: установка значения поля детальных прав доступа для настроек рекрутинга с автоматическим включением просмотра
+- **Жизненный цикл**:
+  1. При открытии модального окна (open = true) инициализируются все состояния из initial* пропсов
+  2. Автоматически раскрываются детальные настройки, если есть соответствующий доступ
+  3. При изменении прав доступа применяется логика автоматического включения просмотра при включении редактирования
+  4. При нажатии "Применить" вызывается onApply с обновленными данными
+- **Логика автоматического включения просмотра**:
+  - При включении любого `edit*` поля автоматически включается соответствующее `view*` поле
+  - При включении `changeStatus` автоматически включается `viewStatus`
+  - При включении `comment` автоматически включается `viewComment`
+- **Особенности**: 
+  - Все чекбоксы доступны для взаимодействия (нет disabled состояний)
+  - Детальные настройки ATS раскрываются кнопкой рядом с модулем "Рекрутинг"
+  - Детальные настройки рекрутинга раскрываются кнопкой рядом с подразделом "Настройки рекрутинга"
+  - При включении доступа к модулю "Рекрутинг" автоматически раскрываются детальные настройки ATS
+  - При включении доступа к "Настройкам рекрутинга" автоматически раскрываются детальные настройки рекрутинга
 - **Используется в**: 
-  - Страницы управления группами: для настройки доступа группы
+  - `/app/company-settings/user-groups/page.tsx`: страница управления группами пользователей для настройки прав доступа групп
 
 ## Интерфейсы и типы
 
@@ -495,6 +550,82 @@ interface Command {
 ```typescript
 type ActionType = 'hrscreening' | 'tech_screening' | 'final_interview' | 'invite'
 ```
+
+### AccessRights (GroupAccessModal)
+```typescript
+type AccessRights = Record<string, { view: boolean; edit: boolean }>
+```
+Базовые права доступа к модулям приложения. Ключ - идентификатор модуля, значение - объект с правами просмотра и редактирования.
+
+### ATSAccessRights (GroupAccessModal)
+```typescript
+type ATSAccessRights = {
+  viewOfferConditions: boolean      // Видеть условия оффера
+  editOfferConditions: boolean       // Редактировать условия оффера
+  viewSalaryConditions: boolean      // Видеть условия ЗП
+  editSalaryConditions: boolean       // Редактировать условия ЗП
+  viewAdditionalFields: boolean      // Видеть дополнительные поля
+  editAdditionalFields: boolean       // Редактировать дополнительные поля
+  viewSocialMedia: boolean            // Видеть соцсети и мессенджеры
+  editSocialMedia: boolean            // Редактировать соцсети и мессенджеры
+  viewTags: boolean                   // Видеть метки
+  editTags: boolean                   // Редактировать метки
+  viewHistory: boolean                // Видеть историю
+  editHistory: boolean                // Редактировать историю
+  viewSource: boolean                 // Видеть источник
+  editSource: boolean                 // Редактировать источник
+  viewStatus: boolean                 // Видеть статусы кандидатов
+  changeStatus: boolean               // Изменять статусы кандидатов
+  viewComment: boolean                // Видеть комментарии
+  comment: boolean                    // Комментировать кандидатов
+}
+```
+Детальные права доступа для ATS (блок Рекрутинг). При включении редактирования автоматически включается просмотр.
+
+### RecruitingSettingsAccessRights (GroupAccessModal)
+```typescript
+type RecruitingSettingsAccessRights = {
+  viewRules: boolean                 // Видеть правила привлечения
+  editRules: boolean                  // Редактировать правила привлечения
+  viewStages: boolean                 // Видеть этапы найма и причины отказа
+  editStages: boolean                 // Редактировать этапы найма и причины отказа
+  viewCommands: boolean               // Видеть команды workflow
+  editCommands: boolean               // Редактировать команды workflow
+  viewCandidateFields: boolean        // Видеть дополнительные поля кандидатов
+  editCandidateFields: boolean        // Редактировать дополнительные поля кандидатов
+  viewScorecard: boolean               // Видеть scorecard
+  editScorecard: boolean              // Редактировать scorecard
+  viewSLA: boolean                     // Видеть SLA
+  editSLA: boolean                    // Редактировать SLA
+  viewVacancyPrompt: boolean           // Видеть единый промпт для вакансий
+  editVacancyPrompt: boolean          // Редактировать единый промпт для вакансий
+  viewOfferTemplate: boolean           // Видеть шаблон оффера
+  editOfferTemplate: boolean          // Редактировать шаблон оффера
+  viewCandidateResponses: boolean      // Видеть ответы кандидатам
+  editCandidateResponses: boolean    // Редактировать ответы кандидатам
+}
+```
+Детальные права доступа для настроек рекрутинга. При включении редактирования автоматически включается просмотр.
+
+### Application (GroupAccessModal)
+```typescript
+interface Application {
+  id: string                          // Уникальный идентификатор приложения
+  name: string                        // Название приложения
+  description?: string                // Описание приложения (опционально)
+}
+```
+Интерфейс приложения/интеграции, доступной для группы пользователей.
+
+### ModuleItem (GroupAccessModal)
+```typescript
+interface ModuleItem {
+  id: string                          // Уникальный идентификатор модуля
+  label: string                       // Название модуля для отображения
+  children?: { id: string; label: string }[]  // Массив подразделов модуля (опционально)
+}
+```
+Интерфейс модуля приложения с возможными подразделами.
 
 ### SLA (SLASettings, SLAEditModal)
 ```typescript
@@ -789,3 +920,79 @@ interface LifecycleBlock {
 - GradeForm используется в GradesSettings
 - SLAEditModal используется в SLASettings
 - UserAccessModal и GroupAccessModal используются на страницах управления пользователями и группами
+
+### AccessRights (GroupAccessModal)
+```typescript
+type AccessRights = Record<string, { view: boolean; edit: boolean }>
+```
+Базовые права доступа к модулям приложения. Ключ - идентификатор модуля, значение - объект с правами просмотра и редактирования.
+
+### ATSAccessRights (GroupAccessModal)
+```typescript
+type ATSAccessRights = {
+  viewOfferConditions: boolean      // Видеть условия оффера
+  editOfferConditions: boolean       // Редактировать условия оффера
+  viewSalaryConditions: boolean      // Видеть условия ЗП
+  editSalaryConditions: boolean       // Редактировать условия ЗП
+  viewAdditionalFields: boolean      // Видеть дополнительные поля
+  editAdditionalFields: boolean       // Редактировать дополнительные поля
+  viewSocialMedia: boolean            // Видеть соцсети и мессенджеры
+  editSocialMedia: boolean            // Редактировать соцсети и мессенджеры
+  viewTags: boolean                   // Видеть метки
+  editTags: boolean                   // Редактировать метки
+  viewHistory: boolean                // Видеть историю
+  editHistory: boolean                // Редактировать историю
+  viewSource: boolean                 // Видеть источник
+  editSource: boolean                 // Редактировать источник
+  viewStatus: boolean                 // Видеть статусы кандидатов
+  changeStatus: boolean               // Изменять статусы кандидатов
+  viewComment: boolean                // Видеть комментарии
+  comment: boolean                    // Комментировать кандидатов
+}
+```
+Детальные права доступа для ATS (блок Рекрутинг). При включении редактирования автоматически включается просмотр.
+
+### RecruitingSettingsAccessRights (GroupAccessModal)
+```typescript
+type RecruitingSettingsAccessRights = {
+  viewRules: boolean                 // Видеть правила привлечения
+  editRules: boolean                  // Редактировать правила привлечения
+  viewStages: boolean                 // Видеть этапы найма и причины отказа
+  editStages: boolean                 // Редактировать этапы найма и причины отказа
+  viewCommands: boolean               // Видеть команды workflow
+  editCommands: boolean               // Редактировать команды workflow
+  viewCandidateFields: boolean        // Видеть дополнительные поля кандидатов
+  editCandidateFields: boolean        // Редактировать дополнительные поля кандидатов
+  viewScorecard: boolean               // Видеть scorecard
+  editScorecard: boolean              // Редактировать scorecard
+  viewSLA: boolean                     // Видеть SLA
+  editSLA: boolean                    // Редактировать SLA
+  viewVacancyPrompt: boolean           // Видеть единый промпт для вакансий
+  editVacancyPrompt: boolean          // Редактировать единый промпт для вакансий
+  viewOfferTemplate: boolean           // Видеть шаблон оффера
+  editOfferTemplate: boolean          // Редактировать шаблон оффера
+  viewCandidateResponses: boolean      // Видеть ответы кандидатам
+  editCandidateResponses: boolean    // Редактировать ответы кандидатам
+}
+```
+Детальные права доступа для настроек рекрутинга. При включении редактирования автоматически включается просмотр.
+
+### Application (GroupAccessModal)
+```typescript
+interface Application {
+  id: string                          // Уникальный идентификатор приложения
+  name: string                        // Название приложения
+  description?: string                // Описание приложения (опционально)
+}
+```
+Интерфейс приложения/интеграции, доступной для группы пользователей.
+
+### ModuleItem (GroupAccessModal)
+```typescript
+interface ModuleItem {
+  id: string                          // Уникальный идентификатор модуля
+  label: string                       // Название модуля для отображения
+  children?: { id: string; label: string }[]  // Массив подразделов модуля (опционально)
+}
+```
+Интерфейс модуля приложения с возможными подразделами.

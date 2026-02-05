@@ -74,6 +74,22 @@ class ClickUpSettings(models.Model):
         help_text='Выберите, какие задачи синхронизировать по тегу huntflow'
     )
     
+    # Папка для плана найма (вытягивание данных из ClickUp)
+    hiring_plan_folder_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name='ID папки для плана найма',
+        help_text='Папка в ClickUp, из которой вытягиваются списки и задачи для плана найма'
+    )
+    hiring_plan_space_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name='ID пространства папки плана найма',
+        help_text='Пространство, в котором находится папка плана найма (для UI)'
+    )
+    
     # Метаданные
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создано')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Обновлено')
@@ -502,3 +518,78 @@ class ClickUpBulkImport(models.Model):
         if self.processed_tasks == 0:
             return 0
         return round((self.successful_tasks / self.processed_tasks) * 100, 1)
+
+
+class ClickUpHiringRequest(models.Model):
+    """
+    Заявка плана найма (hiring/transfer), вытянутая из папки ClickUp.
+    Хранится отдельно от ClickUpTask (выгрузка в Huntflow). Один источник — папка плана найма.
+    """
+    REQUEST_TYPE_CHOICES = [
+        ('hiring', 'Найм'),
+        ('transfer', 'Перевод'),
+        ('group', 'Группа'),
+        ('unknown', 'Не определено'),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь',
+        related_name='clickup_hiring_requests'
+    )
+    clickup_task_id = models.CharField(
+        max_length=100,
+        verbose_name='ID задачи ClickUp',
+        db_index=True
+    )
+    name = models.CharField(max_length=500, verbose_name='Название', blank=True)
+    clickup_status = models.CharField(max_length=100, verbose_name='Статус в ClickUp', blank=True)
+    date_created = models.DateTimeField(null=True, blank=True, verbose_name='Дата создания в ClickUp')
+    date_updated = models.DateTimeField(null=True, blank=True, verbose_name='Дата обновления в ClickUp')
+    start_date = models.DateTimeField(null=True, blank=True, verbose_name='Дата начала')
+    due_date = models.DateTimeField(null=True, blank=True, verbose_name='Срок')
+    list_id = models.CharField(max_length=100, verbose_name='ID списка (спринт)', blank=True, db_index=True)
+    list_name = models.CharField(max_length=255, verbose_name='Название списка (спринт)', blank=True)
+    folder_id = models.CharField(max_length=100, verbose_name='ID папки', blank=True, db_index=True)
+    request_type = models.CharField(
+        max_length=20,
+        choices=REQUEST_TYPE_CHOICES,
+        default='unknown',
+        verbose_name='Тип заявки'
+    )
+    normalized_status = models.CharField(
+        max_length=100,
+        verbose_name='Нормализованный статус',
+        blank=True,
+        help_text='Маппинг статуса ClickUp в единый статус системы'
+    )
+    recruiter = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='assigned_clickup_hiring_requests',
+        verbose_name='Рекрутер'
+    )
+    department = models.CharField(max_length=255, verbose_name='Отдел/группа', blank=True)
+    assignees = models.JSONField(default=list, blank=True, verbose_name='Ответственные (JSON)')
+    creator = models.JSONField(default=dict, blank=True, verbose_name='Создатель (JSON)')
+    custom_fields = models.JSONField(default=dict, blank=True, verbose_name='Кастомные поля ClickUp')
+    raw_task = models.JSONField(default=dict, blank=True, verbose_name='Слепок задачи (для отладки)')
+    synced_at = models.DateTimeField(auto_now=True, verbose_name='Время последней синхронизации')
+
+    class Meta:
+        verbose_name = 'Заявка плана найма (ClickUp)'
+        verbose_name_plural = 'Заявки плана найма (ClickUp)'
+        db_table = 'clickup_hiring_requests'
+        ordering = ['-date_updated', '-synced_at']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'clickup_task_id'],
+                name='unique_user_clickup_task_hiring'
+            )
+        ]
+
+    def __str__(self):
+        return f'{self.name or self.clickup_task_id} ({self.get_request_type_display()})'

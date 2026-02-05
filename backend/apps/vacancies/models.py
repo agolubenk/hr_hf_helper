@@ -40,6 +40,17 @@ class Vacancy(models.Model):
         limit_choices_to={'groups__name': 'Рекрутер'}  # Ограничиваем выбор только рекрутерами
     )
     
+    additional_recruiter = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='vacancies_as_additional_recruiter',
+        verbose_name='Дополнительный рекрутер',
+        help_text='Дополнительный рекрутер по вакансии (опционально)',
+        limit_choices_to={'groups__name': 'Рекрутер'}
+    )
+    
     invite_title = models.CharField(
         max_length=200,
         verbose_name='Заголовок инвайтов',
@@ -217,6 +228,14 @@ class Vacancy(models.Model):
         if self.recruiter and not self.recruiter.groups.filter(name='Рекрутер').exists():
             raise ValidationError({
                 'recruiter': 'Выбранный пользователь не является рекрутером'
+            })
+        if self.additional_recruiter and not self.additional_recruiter.groups.filter(name='Рекрутер').exists():
+            raise ValidationError({
+                'additional_recruiter': 'Дополнительный рекрутер должен быть в группе «Рекрутер»'
+            })
+        if self.additional_recruiter and self.recruiter and self.additional_recruiter_id == self.recruiter_id:
+            raise ValidationError({
+                'additional_recruiter': 'Дополнительный рекрутер не должен совпадать с основным'
             })
     
     def update_activity_status(self):

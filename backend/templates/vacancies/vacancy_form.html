@@ -72,6 +72,20 @@
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
+                                <label for="{{ form.additional_recruiter.id_for_label }}" class="form-label">
+                                    {{ form.additional_recruiter.label }}
+                                </label>
+                                {{ form.additional_recruiter }}
+                                {% if form.additional_recruiter.help_text %}
+                                    <div class="form-text">{{ form.additional_recruiter.help_text }}</div>
+                                {% endif %}
+                                {% if form.additional_recruiter.errors %}
+                                    <div class="text-danger">{{ form.additional_recruiter.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
                                 <label for="{{ form.technologies.id_for_label }}" class="form-label">
                                     <i class="fas fa-code text-info me-2"></i>
                                     {{ form.technologies.label }}

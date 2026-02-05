@@ -3238,7 +3238,11 @@ def api_calendar_events(request):
             try:
                 from apps.vacancies.models import Vacancy
                 print(f"🔍 API: Параметры запроса - vacancy_id={vacancy_id}, meeting_type={meeting_type}, include_interviewers={include_interviewers}")
-                vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True, recruiter=request.user)
+                vacancy = Vacancy.objects.get(
+                    id=vacancy_id, is_active=True
+                )
+                if vacancy.recruiter_id != request.user.id and vacancy.additional_recruiter_id != request.user.id:
+                    raise Vacancy.DoesNotExist()
                 mandatory_interviewers = vacancy.mandatory_tech_interviewers.filter(is_active=True)
                 print(f"🔍 API: Найдено {len(mandatory_interviewers)} обязательных интервьюеров")
                 
@@ -3403,9 +3407,11 @@ def api_interview_slots(request):
                 'message': 'Не указан ID вакансии'
             })
         
-        # Получаем вакансию
+        # Получаем вакансию (доступ: основной или дополнительный рекрутер)
         try:
             vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True)
+            if vacancy.recruiter_id != request.user.id and vacancy.additional_recruiter_id != request.user.id:
+                raise Vacancy.DoesNotExist()
         except Vacancy.DoesNotExist:
             return JsonResponse({
                 'success': False,
@@ -3667,10 +3673,12 @@ def api_interviewers_autocomplete(request):
                 'message': 'Не указан ID вакансии'
             })
         
-        # Получаем вакансию
+        # Получаем вакансию (доступ: основной или дополнительный рекрутер)
         from apps.vacancies.models import Vacancy
         try:
             vacancy = Vacancy.objects.get(id=vacancy_id)
+            if vacancy.recruiter_id != request.user.id and vacancy.additional_recruiter_id != request.user.id:
+                raise Vacancy.DoesNotExist()
         except Vacancy.DoesNotExist:
             return JsonResponse({
                 'success': False,
@@ -3733,9 +3741,11 @@ def api_weekly_reports(request):
                 'message': 'Не указан ID вакансии'
             })
         
-        # Получаем вакансию
+        # Получаем вакансию (доступ: основной или дополнительный рекрутер)
         try:
             vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True)
+            if vacancy.recruiter_id != request.user.id and vacancy.additional_recruiter_id != request.user.id:
+                raise Vacancy.DoesNotExist()
         except Vacancy.DoesNotExist:
             return JsonResponse({
                 'success': False,
@@ -3946,10 +3956,12 @@ def api_third_week_slots(request):
                 'message': 'Не указан ID вакансии'
             })
         
-        # Получаем вакансию
+        # Получаем вакансию (доступ: основной или дополнительный рекрутер)
         from apps.vacancies.models import Vacancy
         try:
-            vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True, recruiter=request.user)
+            vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True)
+            if vacancy.recruiter_id != request.user.id and vacancy.additional_recruiter_id != request.user.id:
+                raise Vacancy.DoesNotExist()
         except Vacancy.DoesNotExist:
             return JsonResponse({
                 'success': False,
@@ -6733,24 +6745,26 @@ def chat_workflow(request, session_id=None):
     from .forms import ChatForm, HRScreeningForm, InviteCombinedForm
 
     # Получаем выбранную вакансию из параметров
+    from apps.vacancies.models import Vacancy
     vacancy_id = request.GET.get('vacancy_id')
     if not vacancy_id:
-        # Если вакансия не указана, берем первую активную вакансию пользователя
-        from apps.vacancies.models import Vacancy
-        active_vacancies = Vacancy.objects.filter(is_active=True, recruiter=request.user).order_by('name')
-        if not active_vacancies.exists():
-            messages.error(request, 'Нет активных вакансий, назначенных вам для создания чата')
-            return redirect('google_oauth:chat_workflow')
-        
-        # Берем первую активную вакансию пользователя
-        vacancy = active_vacancies.first()
-        return redirect(f'{request.path}?vacancy_id={vacancy.id}')
+        # Если вакансия не указана, берем первую доступную (основная или дополнительная)
+        main = Vacancy.objects.filter(is_active=True, recruiter=request.user).order_by('name').first()
+        if main:
+            return redirect(f'{request.path}?vacancy_id={main.id}')
+        additional = Vacancy.objects.filter(is_active=True, additional_recruiter=request.user).order_by('name').first()
+        if additional:
+            return redirect(f'{request.path}?vacancy_id={additional.id}')
+        messages.error(request, 'Нет активных вакансий, назначенных вам для создания чата')
+        return redirect('google_oauth:chat_workflow')
     
     try:
-        from apps.vacancies.models import Vacancy
-        vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True, recruiter=request.user)
+        vacancy = Vacancy.objects.get(id=vacancy_id, is_active=True)
     except Vacancy.DoesNotExist:
-        messages.error(request, 'Выбранная вакансия не найдена, неактивна или не назначена вам')
+        messages.error(request, 'Выбранная вакансия не найдена или неактивна')
+        return redirect('google_oauth:chat_workflow')
+    if vacancy.recruiter_id != request.user.id and vacancy.additional_recruiter_id != request.user.id:
+        messages.error(request, 'У вас нет доступа к этой вакансии')
         return redirect('google_oauth:chat_workflow')
     
     # Получаем или создаем сессию чата для конкретной вакансии
@@ -7185,9 +7199,9 @@ def chat_workflow(request, session_id=None):
     print(f"🔍 DEBUG CHAT: Функция chat_workflow выполняется для пользователя: {request.user.username}")
     
     
-    # Получаем все активные вакансии пользователя для выбора
-    from apps.vacancies.models import Vacancy
-    active_vacancies = Vacancy.objects.filter(is_active=True, recruiter=request.user).order_by('name')
+    # Вакансии для выпадающего списка: сначала основные (рекрутер), затем через разделитель — дополнительные
+    main_vacancies = list(Vacancy.objects.filter(is_active=True, recruiter=request.user).order_by('name'))
+    additional_vacancies = list(Vacancy.objects.filter(is_active=True, additional_recruiter=request.user).order_by('name'))
     
     # Получаем календарь компании из настроек
     company_calendar_id = None
@@ -7841,7 +7855,8 @@ def chat_workflow(request, session_id=None):
         'form': form,
         'chat_session': chat_session,
         'messages': messages_list,  # Используем messages_list, который обновлен через refresh_from_db
-        'active_vacancies': active_vacancies,
+        'main_vacancies': main_vacancies,
+        'additional_vacancies': additional_vacancies,
         'selected_vacancy': vacancy,
         'timestamp': int(time()),
         'contact_history': contact_history_json,  # Передаем JSON-строку для шаблона

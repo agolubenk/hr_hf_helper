@@ -1,4 +1,5 @@
 from django.db.models.signals import pre_save
+from django.db.utils import OperationalError
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from .models import ClickUpSettings
@@ -32,6 +33,9 @@ def clear_clickup_settings_on_api_key_change(sender, instance, **kwargs):
                     
                 except ClickUpSettings.DoesNotExist:
                     # Настройки не существуют, ничего не делаем
+                    pass
+                except OperationalError as e:
+                    # Миграции clickup_int не применены (нет колонок hiring_plan_* и т.д.)
                     pass
                     
         except User.DoesNotExist:

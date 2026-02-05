@@ -78,6 +78,8 @@ interface AppLayoutProps {
   pageTitle?: string
   userName?: string
   onLogout?: () => void
+  /** Контент слева от заголовка (например, бургер для админки) */
+  leftHeaderContent?: ReactNode
 }
 
 /**
@@ -98,6 +100,7 @@ export default function AppLayout({
   pageTitle = "HR Helper",
   userName = "Голубенко Андрей",
   onLogout,
+  leftHeaderContent,
 }: AppLayoutProps) {
   // Получение текущего пути для условного рендеринга
   const pathname = usePathname()
@@ -303,6 +306,7 @@ export default function AppLayout({
         currentTheme={theme}
         menuOpen={menuOpen}
         onLogout={handleLogout}
+        leftContent={leftHeaderContent}
       />
       {/* Статусная панель (только на странице recr-chat)
           - Показывается только если текущая страница начинается с /recr-chat

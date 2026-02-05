@@ -113,6 +113,52 @@ class ClickUpService:
             raise ClickUpAPIError("Необходимо указать folder_id или space_id")
         
         return response.get('lists', [])
+
+    def get_folder_data(
+        self,
+        folder_id: str,
+        include_closed: bool = True,
+        max_lists: int = 50,
+        max_tasks_per_list: int = 500,
+    ) -> Dict[str, Any]:
+        """
+        Вытягивает из папки все списки и задачи (для плана найма).
+        Возвращает: { 'folder_id', 'lists': [ { 'id', 'name', 'task_count', 'tasks': [...] }, ... ] }
+        """
+        lists_raw = self.get_lists(folder_id=folder_id)
+        if not lists_raw:
+            return {'folder_id': folder_id, 'lists': []}
+        result_lists = []
+        for lst in lists_raw[:max_lists]:
+            list_id = lst.get('id') or lst.get('list_id')
+            list_name = lst.get('name', '')
+            if not list_id:
+                continue
+            tasks = []
+            page = 0
+            while len(tasks) < max_tasks_per_list:
+                try:
+                    chunk = self.get_tasks(
+                        list_id,
+                        include_closed=include_closed,
+                        page=page,
+                        exclude_huntflow_tagged=None,
+                    )
+                except ClickUpAPIError:
+                    break
+                if not chunk:
+                    break
+                tasks.extend(chunk)
+                if len(chunk) < 100:
+                    break
+                page += 1
+            result_lists.append({
+                'id': list_id,
+                'name': list_name,
+                'task_count': len(tasks),
+                'tasks': tasks[:max_tasks_per_list],
+            })
+        return {'folder_id': folder_id, 'lists': result_lists}
     
     def get_tasks(self, list_id: str, include_closed: bool = False, page: int = 0, exclude_huntflow_tagged: bool = None) -> List[Dict]:
         """

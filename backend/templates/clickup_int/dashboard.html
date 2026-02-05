@@ -3,6 +3,35 @@
 
 
 {% block content %}
+<!-- Выбор режима работы -->
+<div class="row mb-4">
+    <div class="col-12">
+        <h5 class="mb-3"><i class="fas fa-random me-2"></i>Выберите режим работы</h5>
+    </div>
+    <div class="col-md-6 mb-3">
+        <a href="{% url 'clickup_int:hiring_plan_from_clickup' %}" class="text-decoration-none">
+            <div class="card clickup-card h-100 border-primary hover-shadow">
+                <div class="card-body text-center py-4">
+                    <i class="fas fa-clipboard-list fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">План найма</h5>
+                    <p class="card-text text-muted small mb-0">Вытянуть данные из папки ClickUp: списки и задачи для плана найма</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 mb-3">
+        <a href="{% url 'clickup_int:bulk_import' %}" class="text-decoration-none">
+            <div class="card clickup-card h-100 border-success hover-shadow">
+                <div class="card-body text-center py-4">
+                    <i class="fas fa-file-export fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Выгрузка в Huntflow</h5>
+                    <p class="card-text text-muted small mb-0">Массовый импорт кандидатов из списка ClickUp в Huntflow</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
 <div class="row">
     <!-- Статус интеграции -->
     <div class="col-lg-8">

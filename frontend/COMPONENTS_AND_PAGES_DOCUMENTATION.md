@@ -1,1888 +1,622 @@
-# Документация компонентов и страниц Frontend приложения HR Helper
+# Документация компонентов и страниц приложения HR Helper
 
-> **Важно:** Для получения полной объединенной документации с архитектурными принципами, детальными описаниями компонентов и страниц, а также руководством по разработке, см. **[MASTER_DOCUMENTATION.md](./MASTER_DOCUMENTATION.md)**
+Полное и детализированное описание всех компонентов и страниц фронтенд-приложения.
 
-Этот документ содержит краткий обзор компонентов и страниц. Для детальной информации о каждом компоненте и странице см. соответствующие файлы `COMPONENTS_DOCUMENTATION.md` и `PAGE_DOCUMENTATION.md` в директориях компонентов и страниц.
+---
 
 ## Оглавление
 
-1. [Базовые компоненты](#базовые-компоненты)
-2. [Страницы приложения](#страницы-приложения)
-3. [Компоненты по функциональным областям](#компоненты-по-функциональным-областям)
+1. [Структура приложения](#1-структура-приложения)
+2. [Layout и провайдеры](#2-layout-и-провайдеры)
+3. [Все страницы (маршруты)](#3-все-страницы-маршруты)
+4. [Все компоненты](#4-все-компоненты)
 
 ---
 
-## Базовые компоненты
+## 1. Структура приложения
 
-### AppLayout (`components/AppLayout.tsx`)
-
-**Назначение:** Основной layout-компонент, оборачивающий все страницы приложения.
-
-**Функциональность:**
-- Управляет состоянием бокового меню (открыто/закрыто)
-- Сохраняет состояние меню в localStorage (только для десктопа)
-- Автоматически закрывает меню на мобильных устройствах (< 768px)
-- Интегрирует Header, Sidebar, FloatingActions и StatusBar
-- Управляет отступами контента в зависимости от открытого меню
-- Поддерживает специальные отступы для страницы recr-chat
-
-**Пропсы:**
-- `children: ReactNode` - содержимое страницы
-- `pageTitle?: string` - заголовок страницы (по умолчанию "HR Helper")
-- `userName?: string` - имя пользователя (по умолчанию "Голубенко Андрей")
-- `onLogout?: () => void` - обработчик выхода из системы
-
-**Использование:**
-```tsx
-<AppLayout pageTitle="Название страницы" userName="Имя Фамилия">
-  {/* Контент страницы */}
-</AppLayout>
-```
-
-**Особенности:**
-- На мобильных устройствах меню всегда закрыто по умолчанию
-- На десктопе состояние меню сохраняется между сессиями
-- При изменении размера окна на мобильное устройство меню автоматически закрывается
+- **Фреймворк:** Next.js (App Router).
+- **UI:** Radix UI Themes.
+- **Язык:** TypeScript, React.
+- **Стили:** CSS Modules, глобальные стили (`globals.css`, `@radix-ui/themes/styles.css`).
+- **Корневой layout:** `app/layout.tsx` — оборачивает всё приложение в `ThemeProvider` и `ToastProvider`.
+- **Основной layout страниц:** `AppLayout` (Header, Sidebar, контент, FloatingActions, опционально StatusBar).
+- **Специальный layout:** `app/admin/layout.tsx` — обёртка для раздела админки с левым AdminSidebar и бургер-кнопкой в Header.
 
 ---
 
-### Header (`components/Header.tsx`)
+## 2. Layout и провайдеры
 
-**Назначение:** Верхняя панель навигации приложения.
+### 2.1. Root Layout — `app/layout.tsx`
 
-**Функциональность:**
-- Отображает название текущей страницы
-- Глобальный поиск с поддержкой горячих клавиш (Cmd+K / Ctrl+K)
-- Кнопка переключения темы (светлая/темная)
-- Кнопка уведомлений (в разработке)
-- Кнопка меню (открытие/закрытие бокового меню)
-- Информация о пользователе с переходом на профиль
-- Кнопка выхода из системы
+**Назначение:** Корневой layout Next.js. Оборачивает все страницы, подключает глобальные стили и провайдеры.
+
+**Содержимое:**
+- `html` с `lang="ru"`.
+- Импорт `@radix-ui/themes/styles.css` и `./globals.css`.
+- **ThemeProvider** — управление темой (light/dark), сохранение в localStorage, применение к DOM.
+- **ToastProvider** — контекст уведомлений; дочерние компоненты вызывают `useToast()` для показа toast.
+
+**Метаданные:**
+- `title: 'HR Helper'`
+- `description: 'HR Helper Application'`
+
+**Поведение:** Применяется ко всем маршрутам автоматически. Провайдеры инициализируются при загрузке приложения.
+
+---
+
+### 2.2. AppLayout — `components/AppLayout.tsx`
+
+**Назначение:** Единый layout для всех основных страниц: шапка, сайдбар, контент, плавающие действия, при необходимости статусная панель.
 
 **Пропсы:**
-- `pageTitle: string` - заголовок страницы
-- `userName?: string` - имя пользователя
-- `onMenuToggle?: () => void` - обработчик переключения меню
-- `onThemeToggle: () => void` - обработчик переключения темы
-- `currentTheme: 'light' | 'dark'` - текущая тема
-- `menuOpen?: boolean` - состояние меню
-- `onLogout: () => void` - обработчик выхода
+| Проп | Тип | По умолчанию | Описание |
+|------|-----|--------------|----------|
+| `children` | `ReactNode` | — | Контент страницы |
+| `pageTitle` | `string` | `"HR Helper"` | Заголовок в Header |
+| `userName` | `string` | `"Голубенко Андрей"` | Имя пользователя в Header |
+| `onLogout` | `() => void` | — | Обработчик выхода |
+| `leftHeaderContent` | `ReactNode` | — | Контент слева от заголовка (например, бургер в админке) |
 
-**Особенности:**
-- Автоматически определяет платформу (Mac/Windows) для отображения правильной горячей клавиши
-- При клике на имя пользователя происходит переход на страницу профиля
-- Поддерживает hover-эффекты для интерактивных элементов
+**Внутреннее состояние:**
+- `menuOpen` — открыто/закрыто правое боковое меню (Sidebar). На десктопе сохраняется в `localStorage` (ключ `sidebarMenuOpen`), на мобильных (< 768px) всегда закрыто при загрузке.
+
+**Структура рендера:**
+1. **Header** — фиксированный сверху, высота 64px; заголовок, поиск, тема, меню, профиль, выход; опционально `leftContent`.
+2. **StatusBar** — показывается только если `pathname` начинается с `/recr-chat`; фиксирован под Header, высота 48px.
+3. **Sidebar** — фиксированный справа, ширина 280px; открытие/закрытие по `menuOpen` и `onClose`.
+4. **FloatingActions** — плавающие кнопки быстрых действий.
+5. **Контент** — `Flex` с `marginTop: 64px` или `112px` (если есть StatusBar); внутри `Box` с отступами, `marginRight` в зависимости от `menuOpen`, `marginLeft: 24px`.
+
+**Поведение:**
+- При `window.innerWidth < 768` меню закрывается и не восстанавливается из localStorage.
+- При ресайзе окна при переходе на мобильную ширину меню закрывается.
+- `handleMenuToggle` переключает `menuOpen`; `handleLogout` вызывает `onLogout` или `console.log`.
+
+**Связи:** Header, Sidebar, FloatingActions, StatusBar, usePathname, useTheme.
 
 ---
 
-### Sidebar (`components/Sidebar.tsx`)
+### 2.3. Admin Layout — `app/admin/layout.tsx`
 
-**Назначение:** Боковое меню навигации приложения.
+**Назначение:** Layout раздела админки. Использует тот же AppLayout, но добавляет левый AdminSidebar и кнопку-бургер в Header.
 
-**Функциональность:**
-- Иерархическая структура меню с поддержкой вложенных пунктов
-- Автоматическое раскрытие активных разделов
-- Поддержка внешних ссылок
-- Закрытие меню на мобильных устройствах при навигации
-- Отображение пунктов "в разработке" с уведомлениями
-- Разделение на основное меню и настройки
+**Содержимое:**
+- Состояние `adminSidebarOpen` (инициализация из `localStorage`, ключ `adminSidebarOpen`; на мобильных — `false`).
+- Кнопка-бургер (`HamburgerMenuIcon`) в `leftHeaderContent` AppLayout; по клику переключает `adminSidebarOpen`.
+- **AppLayout** с `pageTitle="Admin CRM"` и `leftHeaderContent={burgerButton}`.
+- **AdminSidebar** с `isOpen={adminSidebarOpen}`, `onClose={() => setAdminSidebarOpen(false)}`.
+- Контент в `Box` с `marginLeft: adminSidebarOpen ? 280 : 0` и классом `styles.adminWrap` / `styles.content`.
+
+**Поведение:** Состояние сайдбара админки сохраняется в localStorage на десктопе; бургер открывает/закрывает левую панель.
+
+---
+
+### 2.4. ThemeProvider — `components/ThemeProvider.tsx`
+
+**Назначение:** Провайдер темы (светлая/тёмная) и акцентных цветов.
+
+**Контекст:**
+- `theme: 'light' | 'dark'`
+- `toggleTheme: () => void`
+- `lightThemeAccentColor`, `darkThemeAccentColor` — акцентные цвета для каждой темы.
+- `setLightThemeAccentColor`, `setDarkThemeAccentColor` — установка акцентных цветов.
+
+**Поведение:** Тема и акценты сохраняются в localStorage; при первой загрузке при отсутствии сохранённой темы используется `prefers-color-scheme`. Применяет атрибуты к `document.documentElement` и `document.body`. Использует флаг `mounted` для избежания hydration mismatch.
+
+**Использование:** `const { theme, toggleTheme, ... } = useTheme()`.
+
+---
+
+### 2.5. ToastProvider и Toast — `components/Toast/ToastContext.tsx`, `components/Toast/Toast.tsx`
+
+**Назначение:** Глобальная система уведомлений (toast).
+
+**ToastContext:**
+- `showToast(options)` — базовый показ.
+- `showInfo(title, message?, options?)`
+- `showSuccess(title, message?, options?)`
+- `showError(title, message?, options?)`
+- `showWarning(title, message?, options?)`
+- `showSystem(title, message?, options?)`
+- `removeToast(id)`
+
+**Поведение:** Тосты рендерятся через Portal в `body`, автоматически скрываются по `duration`, поддерживают действия (кнопки). Типы влияют на иконку и стиль.
+
+**Использование:** `const toast = useToast(); toast.showInfo('Заголовок', 'Текст');`
+
+---
+
+## 3. Все страницы (маршруты)
+
+Ниже перечислены все маршруты приложения с путём, назначением и основными компонентами.
+
+### 3.1. Корень и главная
+
+| Путь | Файл | Назначение | Основные компоненты / поведение |
+|------|------|------------|----------------------------------|
+| `/` | `app/page.tsx` | Главная (хаб): приветствие, карточки разделов, приветственный тур | AppLayout, карточки BLOCKS (Link + Card), кнопка «Приветственный тур» (driver.js), сохранение шага тура в localStorage (TOUR_STORAGE_KEY_STEP, TOUR_STORAGE_KEY_URL) |
+
+---
+
+### 3.2. Workflow и рекрутинг
+
+| Путь | Файл | Назначение | Основные компоненты / поведение |
+|------|------|------------|----------------------------------|
+| `/workflow` | `app/workflow/page.tsx` | Рабочая страница чата/воркфлоу: кандидаты, слоты, выбор вакансии | AppLayout, WorkflowHeader, WorkflowChat, WorkflowSidebar, SlotsPanel (модальная панель слотов) |
+| `/recr-chat` | `app/recr-chat/page.tsx` | ATS \| Talent Pool: чат рекрутеров, кандидаты | AppLayout (с StatusBar), контент recr-chat |
+| `/invites` | `app/invites/page.tsx` | Интервью (инвайты): список инвайтов, статистика, создание | AppLayout, InvitesStats, CreateInviteModal, список инвайтов |
+| `/invites/[id]` | `app/invites/[id]/page.tsx` | Детальная страница инвайта | AppLayout, контент инвайта по id |
+| `/invites/[id]/edit` | `app/invites/[id]/edit/page.tsx` | Редактирование инвайта | AppLayout, форма редактирования |
+| `/interviewers` | `app/interviewers/page.tsx` | Интервьюеры: список, фильтры, добавление | AppLayout, список/карточки интервьюеров |
+| `/hiring-requests` | `app/hiring-requests/page.tsx` | Заявки на подбор: список, фильтры, создание | AppLayout, RequestsSearchFilters, RequestsStats, RequestsTable (или карточки), CreateRequestModal |
+
+---
+
+### 3.3. Вакансии и зарплатные вилки
+
+| Путь | Файл | Назначение | Основные компоненты / поведение |
+|------|------|------------|----------------------------------|
+| `/vacancies` | `app/vacancies/page.tsx` | Список вакансий: карточки/список, фильтры, статистика, добавление | AppLayout, VacanciesSearchFilters, VacanciesStats, VacancyCard / VacancyListItem, AddVacancyModal |
+| `/vacancies/[id]` | `app/vacancies/[id]/page.tsx` | Детальная страница вакансии | AppLayout, VacancyDetailHeader, BasicInfoSection, AnalysisPromptSection, InterviewersSection, SalaryRangesSection, TransferStagesSection, RelatedSections |
+| `/vacancies/[id]/edit` | `app/vacancies/[id]/edit/page.tsx` | Редактирование вакансии | AppLayout, секции редактирования: BasicInfoEditSection, AnalysisPromptEditSection, InterviewersEditSection, SalaryRangesEditSection, ScorecardEditSection, TransferStagesEditSection, VacancyLinksEditSection |
+| `/vacancies/salary-ranges` | `app/vacancies/salary-ranges/page.tsx` | Зарплатные вилки: список, фильтры, создание | AppLayout, SalaryRangesSearchFilters, SalaryRangesStats, SalaryRangeCard / SalaryRangeListItem, CreateSalaryRangeModal |
+| `/vacancies/salary-ranges/[id]` | `app/vacancies/salary-ranges/[id]/page.tsx` | Детальная страница зарплатной вилки | AppLayout, контент вилки, SalaryRangeDetailModal при необходимости |
+
+---
+
+### 3.4. Финансы
+
+| Путь | Файл | Назначение | Основные компоненты / поведение |
+|------|------|------------|----------------------------------|
+| `/finance` | `app/finance/page.tsx` | Раздел финансов: навигация к вилкам и бенчмаркам | AppLayout, ссылки/карточки на salary-ranges и benchmarks |
+| `/finance/benchmarks` | `app/finance/benchmarks/page.tsx` | Бенчмарки: аналитика, сравнение с рынком | AppLayout, контент бенчмарков |
+
+---
+
+### 3.5. Календарь, интеграции, вики
+
+| Путь | Файл | Назначение | Основные компоненты / поведение |
+|------|------|------------|----------------------------------|
+| `/calendar` | `app/calendar/page.tsx` | Календарь: события, слоты | AppLayout, контент календаря |
+| `/huntflow` | `app/huntflow/page.tsx` | Интеграция Huntflow | AppLayout, контент Huntflow |
+| `/aichat` | `app/aichat/page.tsx` | ИИ-чат: ассистент для HR | AppLayout, ChatHeader, ChatMessages, ChatInput, ChatHistory, AnimatedAIInput, FormattedText |
+| `/telegram` | `app/telegram/page.tsx` | Telegram: настройки, ссылки | AppLayout, навигация по подразделам |
+| `/telegram/chats` | `app/telegram/chats/page.tsx` | Чаты Telegram | AppLayout, контент чатов |
+| `/telegram/2fa` | `app/telegram/2fa/page.tsx` | 2FA для Telegram | AppLayout, форма/инфо 2FA |
+| `/wiki` | `app/wiki/page.tsx` | Вики: список статей, фильтры по категориям/тегам | AppLayout, WikiHeader, WikiFilters, WikiCategory, WikiCard |
+| `/wiki/[id]` | `app/wiki/[id]/page.tsx` | Детальная страница статьи вики | AppLayout, WikiDetailHeader, WikiDetailContent, WikiDetailSidebar, WikiDetailHistory, WikiFileUploadModal, WikiEditForm, WikiTagSelector, WikiDeleteConfirmDialog |
+| `/wiki/[id]/edit` | `app/wiki/[id]/edit/page.tsx` | Редактирование статьи вики | AppLayout, форма редактирования вики |
+
+---
+
+### 3.6. Отчётность
+
+| Путь | Файл | Назначение | Основные компоненты / поведение |
+|------|------|------------|----------------------------------|
+| `/reporting` | `app/reporting/page.tsx` | Главная отчётности: обзор, ссылки на отчёты | AppLayout, карточки/ссылки отчётов |
+| `/reporting/hiring-plan` | `app/reporting/hiring-plan/page.tsx` | План найма | AppLayout, контент плана найма |
+| `/reporting/hiring-plan/yearly` | `app/reporting/hiring-plan/yearly/page.tsx` | План найма по годам | AppLayout, контент годового плана |
+| `/reporting/company` | `app/reporting/company/page.tsx` | Отчёт по компании | AppLayout, контент отчёта по компании |
+
+---
+
+### 3.7. Ответы кандидатам и поиск
+
+| Путь | Файл | Назначение | Основные компоненты / поведение |
+|------|------|------------|----------------------------------|
+| `/candidate-responses` | `app/candidate-responses/page.tsx` | Шаблоны ответов кандидатам: общие, по грейдам, слоты | AppLayout, GeneralTemplatesTab, GradeTemplatesTab, SlotsTab, RejectionTemplateForm |
+| `/search` | `app/search/page.tsx` | Глобальный поиск (страница поиска) | AppLayout, контент поиска (связь с GlobalSearch) |
+
+---
+
+### 3.8. Аккаунт и авторизация
+
+| Путь | Файл | Назначение | Основные компоненты / поведение |
+|------|------|------------|----------------------------------|
+| `/account/login` | `app/account/login/page.tsx` | Вход: email, пароль, восстановление пароля | Форма входа, ссылка на forgot-password, редирект при успехе |
+| `/account/forgot-password` | `app/account/forgot-password/page.tsx` | Восстановление пароля: ввод email | Форма, отправка запроса, сообщение об успехе |
+| `/account/reset-password` | `app/account/reset-password/page.tsx` | Сброс пароля по токену из URL | Форма нового пароля и подтверждения, валидация |
+| `/account/profile` | `app/account/profile/page.tsx` | Профиль пользователя: вкладки Профиль, Интеграции, Быстрые кнопки | AppLayout, ProfileNavigation, ProfileInfo, ProfileEditForm, IntegrationSettingsModal, QuickButtonsPage, AccentColorSettings, UserCard, GoogleIntegration, QuickButtonModal, IntegrationSettingsForm |
+
+---
+
+### 3.9. Настройки компании
+
+| Путь | Файл | Назначение | Основные компоненты / поведение |
+|------|------|------------|----------------------------------|
+| `/company-settings` | `app/company-settings/page.tsx` | Общие настройки компании | AppLayout, GeneralSettings, левое меню подразделов |
+| `/company-settings/org-structure` | `app/company-settings/org-structure/page.tsx` | Оргструктура | AppLayout, контент оргструктуры |
+| `/company-settings/grades` | `app/company-settings/grades/page.tsx` | Грейды | AppLayout, GradesSettings, GradeForm |
+| `/company-settings/finance` | `app/company-settings/finance/page.tsx` | Финансовые настройки | AppLayout, CurrencyRatesSection, GradesSection, TaxesSection |
+| `/company-settings/employee-lifecycle` | `app/company-settings/employee-lifecycle/page.tsx` | Жизненный цикл сотрудников | AppLayout, EmployeeLifecycleSettings |
+| `/company-settings/integrations` | `app/company-settings/integrations/page.tsx` | Интеграции компании | AppLayout, IntegrationScopeModal |
+| `/company-settings/user-groups` | `app/company-settings/user-groups/page.tsx` | Группы пользователей | AppLayout, GroupAccessModal |
+| `/company-settings/users` | `app/company-settings/users/page.tsx` | Пользователи компании | AppLayout, UserAccessModal |
+| `/company-settings/recruiting/stages` | `app/company-settings/recruiting/stages/page.tsx` | Этапы найма | AppLayout, RecruitingStagesSettings |
+| `/company-settings/recruiting/commands` | `app/company-settings/recruiting/commands/page.tsx` | Команды рекрутинга | AppLayout, RecruitingCommandsSettings |
+| `/company-settings/recruiting/rules` | `app/company-settings/recruiting/rules/page.tsx` | Правила рекрутинга | AppLayout, контент правил |
+| `/company-settings/recruiting/offer-template` | `app/company-settings/recruiting/offer-template/page.tsx` | Шаблон оффера | AppLayout, контент шаблона оффера |
+| `/company-settings/scorecard` | `app/company-settings/scorecard/page.tsx` | Scorecard | AppLayout, ScorecardSettings |
+| `/company-settings/sla` | `app/company-settings/sla/page.tsx` | SLA | AppLayout, SLASettings, SLAEditModal |
+| `/company-settings/vacancy-prompt` | `app/company-settings/vacancy-prompt/page.tsx` | Единый промпт для вакансий | AppLayout, VacancyPromptSettings |
+| `/company-settings/candidate-fields` | `app/company-settings/candidate-fields/page.tsx` | Дополнительные поля кандидатов | AppLayout, CandidateFieldsSettings |
+
+---
+
+### 3.10. Admin CRM
+
+| Путь | Файл | Назначение | Основные компоненты / поведение |
+|------|------|------------|----------------------------------|
+| `/admin` | `app/admin/page.tsx` | Главная админки: модули и ссылки на подразделы | AppLayout (через admin layout), AdminSidebar, карточки по ADMIN_MODULES из config.ts |
+| `/admin/users` | `app/admin/users/page.tsx` | Пользователи (список из API) | AppLayout, таблица пользователей, загрузка/ошибка/пустое состояние |
+| `/admin/groups` | `app/admin/groups/page.tsx` | Группы (список из API) | AppLayout, таблица групп, загрузка/ошибка/пустое состояние |
+
+**Конфиг админки:** `app/admin/config.ts` — `ADMIN_MODULES`: Учётные записи (users, groups), Вакансии, Рекрутинг, Отчётность, Настройки компании, Интеграции.
+
+---
+
+### 3.11. Ошибки и 404
+
+| Путь | Файл | Назначение | Основные компоненты / поведение |
+|------|------|------------|----------------------------------|
+| `errors/401` | `app/errors/401/page.tsx` | Ошибка 401 (не авторизован) | AppLayout, текст и кнопки перехода |
+| `errors/402` | `app/errors/402/page.tsx` | Ошибка 402 (требуется оплата) | AppLayout, контент 402 |
+| `errors/404` | `app/errors/404/page.tsx` | Ошибка 404 (страница не найдена) | AppLayout, контент 404 |
+| `errors/500` | `app/errors/500/page.tsx` | Ошибка 500 (сервер) | AppLayout, контент 500 |
+| `errors/forbidden` | `app/errors/forbidden/page.tsx` | Доступ запрещён | AppLayout, контент 403 |
+| (любой неизвестный путь) | `app/not-found.tsx` | Глобальная 404: анимированный фон, код 404, кнопки «На главную» и «Назад» | AppLayout, FloatingIcon (40 иконок), driver.js не используется |
+
+---
+
+## 4. Все компоненты
+
+Описание компонентов по папкам и назначению.
+
+---
+
+### 4.1. Базовые компоненты (корень `components/`)
+
+#### AppLayout — `components/AppLayout.tsx`
+
+Описание см. в разделе [2.2](#22-applayout--componentsapplayouttsx).
+
+---
+
+#### Header — `components/Header.tsx`
+
+**Назначение:** Верхняя панель: заголовок страницы, поиск, меню, тема, профиль, выход.
 
 **Пропсы:**
-- `isOpen: boolean` - состояние открытия меню
-- `onClose: () => void` - обработчик закрытия меню
+| Проп | Тип | Описание |
+|------|-----|----------|
+| `pageTitle` | `string` | Заголовок страницы |
+| `userName` | `string` | Имя пользователя |
+| `onMenuToggle` | `() => void` | Открыть/закрыть Sidebar |
+| `onThemeToggle` | `() => void` | Переключить тему |
+| `currentTheme` | `'light' \| 'dark'` | Текущая тема |
+| `menuOpen` | `boolean` | Состояние Sidebar |
+| `onLogout` | `() => void` | Выход |
+| `leftContent` | `ReactNode` | Контент слева от заголовка (бургер админки и т.п.) |
 
-**Структура меню:**
-- **Главная** - `/workflow`
-- **Календарь** - `/calendar`
-- **Рекрутинг:**
-  - Talent Pool - `/recr-chat`
-  - Инвайты - `/invites`
-  - Вакансии:
-    - Вакансии - `/vacancies`
-    - Заявки - `/hiring-requests`
-  - Интервьюеры - `/interviewers`
-- **Финансы:**
-  - Зарплатные вилки - `/vacancies/salary-ranges`
-  - Бенчмарки - `/finance/benchmarks`
-- **Интеграции:**
-  - Huntflow - `/huntflow`
-  - AI Chat - `/aichat`
-  - Telegram - `/telegram`
-- **Вики** - `/wiki`
-- **Отчетность:**
-  - Главная - `/reporting`
-  - План найма - `/reporting/hiring-plan`
-  - По компании - `/reporting/company`
-- **Настройки:**
-  - Профиль - `/profile`
-  - Интеграции и API - `/profile` (вкладка integrations)
-  - Настройки компании - `/company-settings`
+**Элементы:** Заголовок (Slot), GlobalSearch (горячая клавиша Cmd+S / Ctrl+S), кнопка меню (data-tour="header-menu"), кнопка темы (data-tour="header-theme"), область профиля (data-tour="header-profile"), кнопка выхода (data-tour="header-logout"). Определение shortcutKey для Mac/Windows.
 
-**Особенности:**
-- Автоматически определяет активный пункт меню на основе текущего URL
-- Раскрывает родительские элементы, если активен дочерний
-- На мобильных устройствах закрывается при клике на пункт меню
+**Стили:** `Header.module.css`.
 
 ---
 
-### ThemeProvider (`components/ThemeProvider.tsx`)
+#### Sidebar — `components/Sidebar.tsx`
 
-**Назначение:** Провайдер темы приложения (светлая/темная).
+**Назначение:** Правое боковое меню навигации: иерархия пунктов, «Главная» с выбором главной страницы, «Admin CRM» с выбором главной страницы админки.
 
-**Функциональность:**
-- Управление темой приложения
-- Сохранение выбранной темы в localStorage
-- Предоставление контекста темы всем дочерним компонентам
+**Пропсы:** `isOpen: boolean`, `onClose: () => void`.
 
-**Использование:**
-```tsx
-const { theme, toggleTheme } = useTheme()
-```
+**Состояние/логика:**
+- Тема из `useTheme()`.
+- `pathname` для подсветки активного пункта.
+- «Главная»: `homeHref` из localStorage (`sidebarHomeHref`), DropdownMenu с выбором главной по блокам (mainPagesByBlock), GearIcon 16×16, `pr="3"`.
+- «Admin CRM»: `adminHomeHref` из localStorage (`sidebarAdminHomeHref`), DropdownMenu со списком из `ADMIN_MODULES` (adminMainPages), GearIcon, `pr="3"`.
+- Пункты «в разработке» из `IN_DEVELOPMENT_IDS` — при клике toast «В разработке».
+- На мобильных при навигации вызывается `onClose`.
 
----
-
-### Toast (`components/Toast/Toast.tsx`, `ToastContext.tsx`)
-
-**Назначение:** Система уведомлений для пользователя.
-
-**Функциональность:**
-- Отображение информационных сообщений
-- Отображение сообщений об успехе
-- Отображение сообщений об ошибках
-- Отображение предупреждений
-- Автоматическое скрытие через заданное время
-
-**Использование:**
-```tsx
-const toast = useToast()
-toast.showInfo('Заголовок', 'Сообщение')
-toast.showSuccess('Заголовок', 'Сообщение')
-toast.showError('Заголовок', 'Сообщение')
-toast.showWarning('Заголовок', 'Сообщение')
-```
+**Структура меню:** menuItems (Главная, Календарь, Рекрутинг с детьми, Финансы, Интеграции, Вики, Отчётность), Separator, settingsItems (Профиль, Интеграции и API, Настройки компании, Admin CRM). Иконки 16×16, стили `Sidebar.module.css` (menuItem, menuItemActive).
 
 ---
 
-### GlobalSearch (`components/GlobalSearch/GlobalSearch.tsx`)
+#### FloatingActions — `components/FloatingActions.tsx`
 
-**Назначение:** Глобальный поиск по приложению.
+**Назначение:** Плавающая панель быстрых действий (ссылки, копирование текста/даты, прокрутка вверх, настройки).
 
-**Функциональность:**
-- Поиск по запросам, сущностям и скоупу
-- Поддержка горячих клавиш (Cmd+K / Ctrl+K)
-- Отображение подсказки с горячей клавишей
-- Поддержка темной темы
+**Поведение:** По умолчанию скрыта; показ при наведении на левый край экрана или при закреплении. Состояние закрепления и включения кнопок хранится в localStorage и синхронизируется между вкладками (CustomEvent). Учитывается pathname для отступа сверху (recr-chat — 112px). Кнопка «Вверх» — плавная прокрутка вверх; кнопка настроек — переход на страницу настроек быстрых кнопок. Использует QuickButtonsContext (или настройки из профиля).
+
+**Иконки:** PinUnpinnedIcon / PinLeftIcon для закрепления, GearIcon, ArrowUpIcon и иконки быстрых кнопок.
+
+---
+
+#### StatusBar — `components/StatusBar.tsx`
+
+**Назначение:** Горизонтальная панель под Header на странице recr-chat: выбор вакансии, статусы кандидатов, группировка неактивных этапов.
 
 **Пропсы:**
-- `placeholder?: string` - текст placeholder
-- `shortcutHint?: string` - подсказка с горячей клавишей
-- `dark?: boolean` - темная тема
-- `onSearch?: () => void` - обработчик поиска
-- `onEntityClick?: () => void` - обработчик клика на сущность
+- `vacancies`, `myVacancyIds`, `statuses`, `onGeneralSettingsClick`, `onAddVacancy`.
 
-**Статус:** В разработке
+**Поведение:** Выпадающий список вакансий (Мои / Все / список), горизонтальный скролл статусов, группа «N этапов без кандидатов» с раскрытием. AddVacancyModal при добавлении вакансии. Стили `StatusBar.module.css`.
 
 ---
 
-### StatusBar (`components/StatusBar.tsx`)
+#### ThemeProvider — `components/ThemeProvider.tsx`
 
-**Назначение:** Статусная панель, отображаемая на странице recr-chat.
+Описание см. в разделе [2.4](#24-themeprovider--componentsthemeprovidertsx).
 
-**Функциональность:**
-- Отображает дополнительную информацию о текущем состоянии
-- Фиксированная позиция под Header
-
----
-
-### FloatingActions (`components/FloatingActions.tsx`)
-
-**Назначение:** Плавающие кнопки действий.
-
-**Функциональность:**
-- Быстрый доступ к часто используемым действиям
-- Адаптивное позиционирование
-
----
-
-## Страницы приложения
-
-### Главная страница (`app/page.tsx`)
-
-**Назначение:** Домашняя страница приложения с навигацией по разделам.
-
-**Функциональность:**
-- Отображение приветственного сообщения
-- Кнопка "Приветственный тур" с использованием driver.js
-- Блоки навигации по разделам:
-  - Чат
-  - Рекрутинг
-  - Вакансии
-  - Заявки на подбор
-  - ЗП вилки
-  - Бенчмарки
-  - Интервьюеры
-  - ИИ чат
-  - Вики
-  - Отчетность
-  - Настройки
-
-**Особенности:**
-- Сохранение последнего шага тура в localStorage
-- Восстановление тура с последнего шага при возврате на страницу
-
----
-
-### Workflow (`app/workflow/page.tsx`)
-
-**Назначение:** Основная рабочая страница для работы с кандидатами и чатом.
-
-**Функциональность:**
-- Управление состоянием панели слотов
-- Интеграция WorkflowHeader, WorkflowChat, WorkflowSidebar
-- Отображение SlotsPanel при необходимости
-- Специальные отступы для контента (8px сверху)
-
-**Компоненты:**
-- `WorkflowHeader` - заголовок с кнопкой открытия панели слотов
-- `WorkflowChat` - чат для работы с кандидатами
-- `WorkflowSidebar` - боковая панель с информацией о кандидате
-- `SlotsPanel` - панель слотов для быстрых действий
-
----
-
-### Login (`app/login/page.tsx`)
-
-**Назначение:** Страница входа в систему.
-
-**Функциональность:**
-- Форма входа с полями email и пароль
-- Валидация полей
-- Обработка ошибок входа
-- Переход на страницу восстановления пароля
-- Редирект на главную страницу при успешном входе
-
-**Особенности:**
-- Использует AppLayout для единообразного оформления
-- Поддержка темной темы
-
----
-
-### Forgot Password (`app/forgot-password/page.tsx`)
-
-**Назначение:** Страница восстановления пароля.
-
-**Функциональность:**
-- Форма с полем email
-- Отправка запроса на восстановление пароля
-- Отображение сообщения об успешной отправке
-
----
-
-### Reset Password (`app/reset-password/page.tsx`)
-
-**Назначение:** Страница сброса пароля.
-
-**Функциональность:**
-- Форма с полями нового пароля и подтверждения
-- Валидация пароля
-- Обработка токена сброса из URL
-
----
-
-### Profile (`app/profile/page.tsx`)
-
-**Назначение:** Страница профиля пользователя.
-
-**Функциональность:**
-- Вкладки: Профиль, Интеграции, Быстрые кнопки
-- Редактирование информации профиля
-- Настройка интеграций
-- Управление быстрыми кнопками
-- Настройка акцентного цвета
-
-**Компоненты:**
-- `ProfileNavigation` - навигация по вкладкам
-- `ProfileInfo` - информация о пользователе
-- `ProfileEditForm` - форма редактирования
-- `IntegrationSettingsModal` - модальное окно настроек интеграций
-- `QuickButtonsPage` - страница быстрых кнопок
-- `AccentColorSettings` - настройки цвета
-
----
-
-### Vacancies (`app/vacancies/page.tsx`)
-
-**Назначение:** Список вакансий.
-
-**Функциональность:**
-- Отображение вакансий в виде карточек или списка
-- Переключение между видами отображения
-- Фильтрация и поиск вакансий
-- Статистика по вакансиям
-- Создание новой вакансии
-- Редактирование вакансии
-- Переход к детальной странице вакансии
-
-**Компоненты:**
-- `VacanciesSearchFilters` - фильтры поиска
-- `VacanciesStats` - статистика
-- `VacancyCard` - карточка вакансии (вид карточек)
-- `VacancyListItem` - элемент списка (вид списка)
-- `VacancyEditModal` - модальное окно редактирования
-- `AddVacancyModal` - модальное окно создания
-
-**Состояния вакансий:**
-- `active` - активная
-- `inactive` - неактивная
-
-**Предупреждения:**
-- Отсутствие зарплатных вилок
-- Другие предупреждения
-
----
-
-### Vacancy Detail (`app/vacancies/[id]/page.tsx`)
-
-**Назначение:** Детальная страница вакансии.
-
-**Функциональность:**
-- Отображение полной информации о вакансии
-- Редактирование вакансии
-- Управление интервьюерами
-- Управление зарплатными вилками
-- Управление этапами переноса
-- Связанные разделы
-
-**Компоненты:**
-- `VacancyDetailHeader` - заголовок с действиями
-- `BasicInfoSection` - основная информация
-- `AnalysisPromptSection` - промпт для анализа
-- `InterviewersSection` - интервьюеры
-- `SalaryRangesSection` - зарплатные вилки
-- `TransferStagesSection` - этапы переноса
-- `RelatedSections` - связанные разделы
-
----
-
-### Vacancy Edit (`app/vacancies/[id]/edit/page.tsx`)
-
-**Назначение:** Страница редактирования вакансии.
-
-**Функциональность:**
-- Редактирование всех полей вакансии
-- Сохранение изменений
-- Отмена редактирования
-
-**Компоненты:**
-- `BasicInfoEditSection` - редактирование основной информации
-- `AnalysisPromptEditSection` - редактирование промпта
-- `InterviewersEditSection` - редактирование интервьюеров
-- `SalaryRangesEditSection` - редактирование зарплатных вилок
-- `ScorecardEditSection` - редактирование scorecard
-- `TransferStagesEditSection` - редактирование этапов
-- `VacancyLinksEditSection` - редактирование ссылок
-
----
-
-### Salary Ranges (`app/vacancies/salary-ranges/page.tsx`)
-
-**Назначение:** Управление зарплатными вилками.
-
-**Функциональность:**
-- Список зарплатных вилок
-- Фильтрация и поиск
-- Создание новой вилки
-- Редактирование вилки
-- Статистика
-
-**Компоненты:**
-- `SalaryRangesSearchFilters` - фильтры поиска
-- `SalaryRangesStats` - статистика
-- `SalaryRangeCard` - карточка вилки
-- `SalaryRangeListItem` - элемент списка
-- `CreateSalaryRangeModal` - создание вилки
-- `SalaryRangeDetailModal` - детальная информация
-
----
-
-### Salary Range Detail (`app/vacancies/salary-ranges/[id]/page.tsx`)
-
-**Назначение:** Детальная страница зарплатной вилки.
-
-**Функциональность:**
-- Отображение полной информации о вилке
-- Редактирование вилки
-- История изменений
-
----
-
-### Hiring Requests (`app/hiring-requests/page.tsx`)
-
-**Назначение:** Управление заявками на подбор.
-
-**Функциональность:**
-- Список заявок
-- Фильтрация и поиск
-- Создание новой заявки
-- Редактирование заявки
-- Статистика
-
-**Компоненты:**
-- `RequestsSearchFilters` - фильтры поиска
-- `RequestsStats` - статистика
-- `RequestCard` - карточка заявки
-- `RequestListItem` - элемент списка
-- `RequestTableRow` - строка таблицы
-- `RequestTableRowExpanded` - развернутая строка
-- `RequestsTable` - таблица заявок
-- `CreateRequestModal` - создание заявки
-
----
-
-### Interviewers (`app/interviewers/page.tsx`)
-
-**Назначение:** Управление интервьюерами.
-
-**Функциональность:**
-- Список интервьюеров
-- Фильтрация и поиск
-- Добавление интервьюера
-- Редактирование интервьюера
-- Статистика
-
----
-
-### Recr Chat (`app/recr-chat/page.tsx`)
-
-**Назначение:** Страница работы с Talent Pool (чатом рекрутеров).
-
-**Функциональность:**
-- Чат с кандидатами
-- Управление кандидатами
-- Фильтрация и поиск
-- Статусная панель
-
-**Особенности:**
-- Использует StatusBar для отображения дополнительной информации
-- Специальные отступы для контента
-
----
-
-### Invites (`app/invites/page.tsx`)
-
-**Назначение:** Управление инвайтами.
-
-**Функциональность:**
-- Список инвайтов
-- Создание нового инвайта
-- Фильтрация и поиск
-- Статистика
-
-**Компоненты:**
-- `InvitesStats` - статистика
-- `CreateInviteModal` - создание инвайта
-
----
-
-### Invite Detail (`app/invites/[id]/page.tsx`)
-
-**Назначение:** Детальная страница инвайта.
-
-**Функциональность:**
-- Отображение полной информации об инвайте
-- Редактирование инвайта
-- История изменений
-
----
-
-### Invite Edit (`app/invites/[id]/edit/page.tsx`)
-
-**Назначение:** Редактирование инвайта.
-
-**Функциональность:**
-- Форма редактирования инвайта
-- Сохранение изменений
-- Отмена редактирования
-
----
-
-### Wiki (`app/wiki/page.tsx`)
-
-**Назначение:** Главная страница вики.
-
-**Функциональность:**
-- Список статей вики
-- Фильтрация по категориям и тегам
-- Поиск статей
-- Создание новой статьи
-- Переход к детальной странице статьи
-
-**Компоненты:**
-- `WikiHeader` - заголовок с действиями
-- `WikiFilters` - фильтры
-- `WikiCategory` - категория статей
-- `WikiCard` - карточка статьи
-
----
-
-### Wiki Detail (`app/wiki/[id]/page.tsx`)
-
-**Назначение:** Детальная страница статьи вики.
-
-**Функциональность:**
-- Отображение содержимого статьи
-- Редактирование статьи
-- Удаление статьи
-- История изменений
-- Загрузка файлов
-- Управление тегами
-
-**Компоненты:**
-- `WikiDetailHeader` - заголовок с действиями
-- `WikiDetailContent` - содержимое статьи
-- `WikiDetailSidebar` - боковая панель
-- `WikiDetailHistory` - история изменений
-- `WikiEditForm` - форма редактирования
-- `WikiFileUploadModal` - загрузка файлов
-- `WikiDeleteConfirmDialog` - подтверждение удаления
-- `WikiTagSelector` - выбор тегов
-
----
-
-### Wiki Edit (`app/wiki/[id]/edit/page.tsx`)
-
-**Назначение:** Редактирование статьи вики.
-
-**Функциональность:**
-- Форма редактирования статьи
-- Сохранение изменений
-- Отмена редактирования
-- Загрузка файлов
-
----
-
-### AI Chat (`app/aichat/page.tsx`)
-
-**Назначение:** Страница ИИ чата.
-
-**Функциональность:**
-- Чат с ИИ ассистентом
-- История чатов
-- Управление чатами
-- Анимация ввода
-
-**Компоненты:**
-- `ChatHeader` - заголовок чата
-- `ChatHistory` - история чатов
-- `ChatMessages` - сообщения чата
-- `ChatInput` - поле ввода
-- `AnimatedAIInput` - анимированное поле ввода
-
----
-
-### Calendar (`app/calendar/page.tsx`)
-
-**Назначение:** Календарь событий.
-
-**Функциональность:**
-- Отображение календаря
-- Создание событий
-- Редактирование событий
-- Фильтрация событий
-
----
-
-### Telegram (`app/telegram/page.tsx`)
-
-**Назначение:** Страница интеграции с Telegram.
-
-**Функциональность:**
-- Вход в Telegram
-- Настройка интеграции
-- Статус подключения
-
----
-
-### Telegram 2FA (`app/telegram/2fa/page.tsx`)
-
-**Назначение:** Настройка двухфакторной аутентификации для Telegram.
-
-**Функциональность:**
-- Включение/выключение 2FA
-- Настройка параметров 2FA
-
----
-
-### Telegram Chats (`app/telegram/chats/page.tsx`)
-
-**Назначение:** Управление чатами Telegram.
-
-**Функциональность:**
-- Список подключенных чатов
-- Добавление чата
-- Удаление чата
-- Настройка чата
-
----
-
-### Huntflow (`app/huntflow/page.tsx`)
-
-**Назначение:** Страница интеграции с Huntflow.
-
-**Функциональность:**
-- Настройка интеграции
-- Синхронизация данных
-- Маппинг этапов найма
-- Маппинг причин отказа
-- Маппинг дополнительных полей
-
-**Особенности:**
-- Настройка соответствия между этапами HR Helper и Huntflow
-- Настройка соответствия между причинами отказа
-- Настройка соответствия между дополнительными полями
-
----
-
-### Finance (`app/finance/page.tsx`)
-
-**Назначение:** Главная страница финансового раздела.
-
-**Функциональность:**
-- Навигация по финансовым разделам
-- Общая статистика
-
----
-
-### Benchmarks (`app/finance/benchmarks/page.tsx`)
-
-**Назначение:** Управление бенчмарками.
-
-**Функциональность:**
-- Список бенчмарков
-- Создание бенчмарка
-- Редактирование бенчмарка
-- Фильтрация и поиск
-
-**Компоненты:**
-- `CurrencyRatesSection` - курсы валют
-- `GradesSection` - грейды
-- `TaxesSection` - налоги
-
----
-
-### Reporting (`app/reporting/page.tsx`)
-
-**Назначение:** Главная страница отчетности.
-
-**Функциональность:**
-- Навигация по разделам отчетности
-- Общая статистика
-
----
-
-### Reporting Hiring Plan (`app/reporting/hiring-plan/page.tsx`)
-
-**Назначение:** Отчет по плану найма.
-
-**Функциональность:**
-- Отображение плана найма
-- Фильтрация по периодам
-- Экспорт отчета
-
----
-
-### Reporting Hiring Plan Yearly (`app/reporting/hiring-plan/yearly/page.tsx`)
-
-**Назначение:** Годовой отчет по плану найма.
-
-**Функциональность:**
-- Годовой план найма
-- Детализация по месяцам
-- Экспорт отчета
-
----
-
-### Reporting Company (`app/reporting/company/page.tsx`)
-
-**Назначение:** Отчет по компании.
-
-**Функциональность:**
-- Общая статистика по компании
-- Метрики найма
-- Фильтрация по периодам
-- Экспорт отчета
-
----
-
-### Candidate Responses (`app/candidate-responses/page.tsx`)
-
-**Назначение:** Управление ответами кандидатам.
-
-**Функциональность:**
-- Управление шаблонами ответов
-- Шаблоны по грейдам
-- Общие шаблоны
-- Управление слотами
-
-**Компоненты:**
-- `GeneralTemplatesTab` - общие шаблоны
-- `GradeTemplatesTab` - шаблоны по грейдам
-- `SlotsTab` - слоты
-- `RejectionTemplateForm` - форма шаблона отказа
-
----
-
-### Company Settings (`app/company-settings/page.tsx`)
-
-**Назначение:** Главная страница настроек компании.
-
-**Функциональность:**
-- Навигация по разделам настроек
-- Общие настройки компании
-
-**Компоненты:**
-- `GeneralSettings` - общие настройки
-
----
-
-### Company Settings Org Structure (`app/company-settings/org-structure/page.tsx`)
-
-**Назначение:** Управление организационной структурой.
-
-**Функциональность:**
-- Отображение структуры компании
-- Добавление подразделений
-- Редактирование подразделений
-- Удаление подразделений
-
----
-
-### Company Settings Grades (`app/company-settings/grades/page.tsx`)
-
-**Назначение:** Управление грейдами.
-
-**Функциональность:**
-- Список грейдов
-- Создание грейда
-- Редактирование грейда
-- Удаление грейда
-
-**Компоненты:**
-- `GradesSettings` - настройки грейдов
-- `GradeForm` - форма грейда
-
----
-
-### Company Settings Employee Lifecycle (`app/company-settings/employee-lifecycle/page.tsx`)
-
-**Назначение:** Управление жизненным циклом сотрудников.
-
-**Функциональность:**
-- Настройка этапов жизненного цикла
-- Управление статусами сотрудников
-
-**Компоненты:**
-- `EmployeeLifecycleSettings` - настройки жизненного цикла
-
----
-
-### Company Settings Finance (`app/company-settings/finance/page.tsx`)
-
-**Назначение:** Финансовые настройки компании.
-
-**Функциональность:**
-- Настройка валют
-- Настройка налогов
-- Настройка грейдов
-
-**Компоненты:**
-- `CurrencyRatesSection` - курсы валют
-- `TaxesSection` - налоги
-- `GradesSection` - грейды
-
----
-
-### Company Settings Integrations (`app/company-settings/integrations/page.tsx`)
-
-**Назначение:** Управление интеграциями компании.
-
-**Функциональность:**
-- Список доступных интеграций
-- Настройка интеграций
-- Управление скоупами интеграций
-
-**Компоненты:**
-- `IntegrationScopeModal` - модальное окно управления скоупами
-
----
-
-### Company Settings User Groups (`app/company-settings/user-groups/page.tsx`)
-
-**Назначение:** Управление группами пользователей.
-
-**Функциональность:**
-- Список групп
-- Создание группы
-- Редактирование группы
-- Удаление группы
-- Управление доступом группы
-
----
-
-### Company Settings Users (`app/company-settings/users/page.tsx`)
-
-**Назначение:** Управление пользователями компании.
-
-**Функциональность:**
-- Список пользователей
-- Добавление пользователя
-- Редактирование пользователя
-- Удаление пользователя
-- Управление доступом пользователя
-
-**Компоненты:**
-- `UserAccessModal` - модальное окно управления доступом
-
----
-
-### Company Settings Recruiting Stages (`app/company-settings/recruiting/stages/page.tsx`)
-
-**Назначение:** Управление этапами найма и причинами отказа.
-
-**Функциональность:**
-- Список этапов найма
-- Создание этапа
-- Редактирование этапа
-- Удаление этапа
-- Список причин отказа
-- Создание причины отказа
-- Редактирование причины отказа
-- Удаление причины отказа
-
-**Компоненты:**
-- `RecruitingStagesSettings` - настройки этапов
-
----
-
-### Company Settings Recruiting Rules (`app/company-settings/recruiting/rules/page.tsx`)
-
-**Назначение:** Управление правилами привлечения.
-
-**Функциональность:**
-- Список правил
-- Создание правила
-- Редактирование правила
-- Удаление правила
-
----
-
-### Company Settings Recruiting Offer Template (`app/company-settings/recruiting/offer-template/page.tsx`)
-
-**Назначение:** Управление шаблоном оффера.
-
-**Функциональность:**
-- Редактирование шаблона оффера
-- Предпросмотр шаблона
-- Сохранение шаблона
-
----
-
-### Company Settings Candidate Fields (`app/company-settings/candidate-fields/page.tsx`)
-
-**Назначение:** Управление дополнительными полями кандидатов.
-
-**Функциональность:**
-- Список дополнительных полей
-- Создание поля
-- Редактирование поля
-- Удаление поля
-
-**Компоненты:**
-- `CandidateFieldsSettings` - настройки полей
-
----
-
-### Company Settings Scorecard (`app/company-settings/scorecard/page.tsx`)
-
-**Назначение:** Управление scorecard.
-
-**Функциональность:**
-- Настройка структуры scorecard
-- Управление критериями оценки
-
-**Компоненты:**
-- `ScorecardSettings` - настройки scorecard
-
----
-
-### Company Settings SLA (`app/company-settings/sla/page.tsx`)
-
-**Назначение:** Управление SLA (Service Level Agreement).
-
-**Функциональность:**
-- Список SLA правил
-- Создание SLA правила
-- Редактирование SLA правила
-- Удаление SLA правила
-
-**Компоненты:**
-- `SLASettings` - настройки SLA
-- `SLAEditModal` - модальное окно редактирования SLA
-
----
-
-### Company Settings Vacancy Prompt (`app/company-settings/vacancy-prompt/page.tsx`)
-
-**Назначение:** Управление единым промптом для вакансий.
-
-**Функциональность:**
-- Редактирование промпта
-- Предпросмотр промпта
-- Сохранение промпта
-
-**Компоненты:**
-- `VacancyPromptSettings` - настройки промпта
-
----
-
-### Search (`app/search/page.tsx`)
-
-**Назначение:** Страница глобального поиска.
-
-**Функциональность:**
-- Поиск по всем сущностям приложения
-- Фильтрация результатов
-- Переход к найденным сущностям
-
----
-
-### Error Pages
-
-#### Error 401 (`app/error-401/page.tsx`)
-**Назначение:** Страница ошибки авторизации.
-
-#### Error 402 (`app/error-402/page.tsx`)
-**Назначение:** Страница ошибки оплаты.
-
-#### Error 500 (`app/error-500/page.tsx`)
-**Назначение:** Страница внутренней ошибки сервера.
-
-#### Forbidden (`app/forbidden/page.tsx`)
-**Назначение:** Страница доступа запрещен.
-
-#### Not Found (`app/not-found.tsx`)
-**Назначение:** Страница 404 (не найдено).
-
----
-
-## Компоненты по функциональным областям
-
-### Workflow компоненты
-
-#### WorkflowHeader (`components/workflow/WorkflowHeader.tsx`)
-**Назначение:** Заголовок страницы workflow.
-
-**Функциональность:**
-- Отображение текущего контекста
-- Кнопка открытия панели слотов
-- Дополнительные действия
-
-**Пропсы:**
-- `onSlotsClick: () => void` - обработчик клика на кнопку слотов
-- `slotsOpen: boolean` - состояние панели слотов
-
----
-
-#### WorkflowChat (`components/workflow/WorkflowChat.tsx`)
-**Назначение:** Чат для работы с кандидатами на странице workflow.
-
-**Функциональность:**
-- Отображение сообщений чата
-- Отправка сообщений
-- Прикрепление файлов
-- Команды для работы с кандидатами
-- Управление статусами кандидатов
-- Управление причинами отказа
-- Удаление сообщений и событий
-
-**Типы сообщений:**
-- `user` - сообщение пользователя
-- `invite` - инвайт кандидата
-- `response` - ответ системы
-
-**Команды:**
-- Создание инвайта
-- Изменение статуса кандидата
-- Указание причины отказа
-- Удаление кандидата/записи/события
-- Другие команды (см. COMMANDS.md)
-
-**Особенности:**
-- Поддержка прикрепления файлов
-- Автоматическая прокрутка к новым сообщениям
-- Скрытие сообщений
-- Управление отклоненными кандидатами
-
----
-
-#### WorkflowSidebar (`components/workflow/WorkflowSidebar.tsx`)
-**Назначение:** Боковая панель с информацией о кандидате.
-
-**Функциональность:**
-- Отображение информации о кандидате
-- История взаимодействий
-- Быстрые действия
-- Управление статусом
-
----
-
-#### SlotsPanel (`components/workflow/SlotsPanel.tsx`)
-**Назначение:** Панель слотов для быстрых действий.
-
-**Функциональность:**
-- Отображение доступных слотов
-- Быстрое выполнение действий
-- Управление слотами
-
----
-
-### Vacancies компоненты
-
-#### VacanciesSearchFilters (`components/vacancies/VacanciesSearchFilters.tsx`)
-**Назначение:** Фильтры поиска вакансий.
-
-**Функциональность:**
-- Поиск по тексту
-- Фильтрация по статусу
-- Фильтрация по рекрутеру
-- Фильтрация по локации
-- Сброс фильтров
-
----
-
-#### VacanciesStats (`components/vacancies/VacanciesStats.tsx`)
-**Назначение:** Статистика по вакансиям.
-
-**Функциональность:**
-- Общее количество вакансий
-- Количество активных вакансий
-- Количество неактивных вакансий
-- Другие метрики
-
----
-
-#### VacancyCard (`components/vacancies/VacancyCard.tsx`)
-**Назначение:** Карточка вакансии (вид карточек).
-
-**Функциональность:**
-- Отображение основной информации о вакансии
-- Статус вакансии
-- Предупреждения
-- Быстрые действия
-- Переход к детальной странице
-
-**Пропсы:**
-- `vacancy: Vacancy` - объект вакансии
-- `onClick?: () => void` - обработчик клика
-
----
-
-#### VacancyListItem (`components/vacancies/VacancyListItem.tsx`)
-**Назначение:** Элемент списка вакансий (вид списка).
-
-**Функциональность:**
-- Отображение информации о вакансии в виде строки
-- Статус вакансии
-- Предупреждения
-- Быстрые действия
-
----
-
-#### AddVacancyModal (`components/vacancies/AddVacancyModal.tsx`)
-**Назначение:** Модальное окно создания вакансии.
-
-**Функциональность:**
-- Форма создания вакансии
-- Валидация полей
-- Сохранение вакансии
-- Отмена создания
-
----
-
-#### VacancyEditModal (`components/vacancies/VacancyEditModal.tsx`)
-**Назначение:** Модальное окно редактирования вакансии.
-
-**Функциональность:**
-- Форма редактирования вакансии
-- Валидация полей
-- Сохранение изменений
-- Отмена редактирования
-
----
-
-#### VacancyDetailHeader (`components/vacancies/VacancyDetailHeader.tsx`)
-**Назначение:** Заголовок детальной страницы вакансии.
-
-**Функциональность:**
-- Отображение названия вакансии
-- Кнопки действий (редактирование, удаление и т.д.)
-- Статус вакансии
-
----
-
-#### BasicInfoSection (`components/vacancies/BasicInfoSection.tsx`)
-**Назначение:** Секция основной информации о вакансии.
-
-**Функциональность:**
-- Отображение основной информации
-- Редактирование основной информации
-
----
-
-#### AnalysisPromptSection (`components/vacancies/AnalysisPromptSection.tsx`)
-**Назначение:** Секция промпта для анализа вакансии.
-
-**Функциональность:**
-- Отображение промпта
-- Редактирование промпта
-
----
-
-#### InterviewersSection (`components/vacancies/InterviewersSection.tsx`)
-**Назначение:** Секция интервьюеров вакансии.
-
-**Функциональность:**
-- Список интервьюеров
-- Добавление интервьюера
-- Удаление интервьюера
-
----
-
-#### SalaryRangesSection (`components/vacancies/SalaryRangesSection.tsx`)
-**Назначение:** Секция зарплатных вилок вакансии.
-
-**Функциональность:**
-- Список зарплатных вилок
-- Добавление вилки
-- Редактирование вилки
-- Удаление вилки
-
----
-
-#### TransferStagesSection (`components/vacancies/TransferStagesSection.tsx`)
-**Назначение:** Секция этапов переноса вакансии.
-
-**Функциональность:**
-- Список этапов переноса
-- Настройка этапов
-
----
-
-#### RelatedSections (`components/vacancies/RelatedSections.tsx`)
-**Назначение:** Секция связанных разделов вакансии.
-
-**Функциональность:**
-- Отображение связанных разделов
-- Навигация к связанным разделам
-
----
-
-### Edit секции вакансий
-
-Все компоненты редактирования находятся в `components/vacancies/edit/` и имеют аналогичную функциональность соответствующих секций, но с возможностью редактирования:
-
-- `BasicInfoEditSection.tsx` - редактирование основной информации
-- `AnalysisPromptEditSection.tsx` - редактирование промпта
-- `InterviewersEditSection.tsx` - редактирование интервьюеров
-- `SalaryRangesEditSection.tsx` - редактирование зарплатных вилок
-- `ScorecardEditSection.tsx` - редактирование scorecard
-- `TransferStagesEditSection.tsx` - редактирование этапов
-- `VacancyLinksEditSection.tsx` - редактирование ссылок
-- `InterviewQuestionsEditSection.tsx` - редактирование вопросов интервью
-
----
-
-### Salary Ranges компоненты
-
-#### SalaryRangesSearchFilters (`components/salary-ranges/SalaryRangesSearchFilters.tsx`)
-**Назначение:** Фильтры поиска зарплатных вилок.
-
-**Функциональность:**
-- Поиск по тексту
-- Фильтрация по параметрам
-- Сброс фильтров
-
----
-
-#### SalaryRangesStats (`components/salary-ranges/SalaryRangesStats.tsx`)
-**Назначение:** Статистика по зарплатным вилкам.
-
-**Функциональность:**
-- Общее количество вилок
-- Другие метрики
-
----
-
-#### SalaryRangeCard (`components/salary-ranges/SalaryRangeCard.tsx`)
-**Назначение:** Карточка зарплатной вилки.
-
-**Функциональность:**
-- Отображение информации о вилке
-- Переход к детальной странице
-
----
-
-#### SalaryRangeListItem (`components/salary-ranges/SalaryRangeListItem.tsx`)
-**Назначение:** Элемент списка зарплатных вилок.
-
-**Функциональность:**
-- Отображение информации в виде строки
-- Переход к детальной странице
-
----
-
-#### CreateSalaryRangeModal (`components/salary-ranges/CreateSalaryRangeModal.tsx`)
-**Назначение:** Модальное окно создания зарплатной вилки.
-
-**Функциональность:**
-- Форма создания вилки
-- Валидация полей
-- Сохранение вилки
-
----
-
-#### SalaryRangeDetailModal (`components/salary-ranges/SalaryRangeDetailModal.tsx`)
-**Назначение:** Модальное окно детальной информации о зарплатной вилке.
-
-**Функциональность:**
-- Отображение полной информации
-- Редактирование вилки
-- История изменений
-
----
-
-### Requests компоненты
-
-#### RequestsSearchFilters (`components/requests/RequestsSearchFilters.tsx`)
-**Назначение:** Фильтры поиска заявок.
-
-**Функциональность:**
-- Поиск по тексту
-- Фильтрация по статусу
-- Фильтрация по параметрам
-- Сброс фильтров
-
----
-
-#### RequestsStats (`components/requests/RequestsStats.tsx`)
-**Назначение:** Статистика по заявкам.
-
-**Функциональность:**
-- Общее количество заявок
-- Количество по статусам
-- Другие метрики
-
----
-
-#### RequestCard (`components/requests/RequestCard.tsx`)
-**Назначение:** Карточка заявки.
-
-**Функциональность:**
-- Отображение информации о заявке
-- Статус заявки
-- Быстрые действия
-
----
-
-#### RequestListItem (`components/requests/RequestListItem.tsx`)
-**Назначение:** Элемент списка заявок.
-
-**Функциональность:**
-- Отображение информации в виде строки
-- Статус заявки
-- Быстрые действия
-
----
-
-#### RequestTableRow (`components/requests/RequestTableRow.tsx`)
-**Назначение:** Строка таблицы заявок.
-
-**Функциональность:**
-- Отображение информации в таблице
-- Раскрытие/сворачивание деталей
-- Быстрые действия
-
----
-
-#### RequestTableRowExpanded (`components/requests/RequestTableRowExpanded.tsx`)
-**Назначение:** Развернутая строка таблицы заявок.
-
-**Функциональность:**
-- Детальная информация о заявке
-- Дополнительные действия
-
----
-
-#### RequestsTable (`components/requests/RequestsTable.tsx`)
-**Назначение:** Таблица заявок.
-
-**Функциональность:**
-- Отображение списка заявок в таблице
-- Сортировка
-- Фильтрация
-- Пагинация
-
----
-
-#### CreateRequestModal (`components/requests/CreateRequestModal.tsx`)
-**Назначение:** Модальное окно создания заявки.
-
-**Функциональность:**
-- Форма создания заявки
-- Валидация полей
-- Сохранение заявки
-
----
-
-### Wiki компоненты
-
-#### WikiHeader (`components/wiki/WikiHeader.tsx`)
-**Назначение:** Заголовок страницы вики.
-
-**Функциональность:**
-- Кнопка создания статьи
-- Поиск
-- Дополнительные действия
-
----
-
-#### WikiFilters (`components/wiki/WikiFilters.tsx`)
-**Назначение:** Фильтры статей вики.
-
-**Функциональность:**
-- Фильтрация по категориям
-- Фильтрация по тегам
-- Поиск
-
----
-
-#### WikiCategory (`components/wiki/WikiCategory.tsx`)
-**Назначение:** Категория статей вики.
-
-**Функциональность:**
-- Отображение категории
-- Список статей в категории
-- Раскрытие/сворачивание
-
----
-
-#### WikiCard (`components/wiki/WikiCard.tsx`)
-**Назначение:** Карточка статьи вики.
-
-**Функциональность:**
-- Отображение информации о статье
-- Теги
-- Переход к детальной странице
-
----
-
-#### WikiDetailHeader (`components/wiki/WikiDetailHeader.tsx`)
-**Назначение:** Заголовок детальной страницы статьи.
-
-**Функциональность:**
-- Название статьи
-- Кнопки действий (редактирование, удаление)
-- Навигация назад
-
----
-
-#### WikiDetailContent (`components/wiki/WikiDetailContent.tsx`)
-**Назначение:** Содержимое статьи вики.
-
-**Функциональность:**
-- Отображение содержимого статьи
-- Поддержка markdown
-- Отображение файлов
-
----
-
-#### WikiDetailSidebar (`components/wiki/WikiDetailSidebar.tsx`)
-**Назначение:** Боковая панель детальной страницы статьи.
-
-**Функциональность:**
-- Информация о статье
-- Теги
-- История изменений
-- Связанные статьи
-
----
-
-#### WikiDetailHistory (`components/wiki/WikiDetailHistory.tsx`)
-**Назначение:** История изменений статьи.
-
-**Функциональность:**
-- Список версий статьи
-- Просмотр версий
-- Восстановление версии
-
----
-
-#### WikiEditForm (`components/wiki/WikiEditForm.tsx`)
-**Назначение:** Форма редактирования статьи.
-
-**Функциональность:**
-- Редактирование содержимого
-- Редактирование тегов
-- Сохранение изменений
-- Отмена редактирования
-
----
-
-#### WikiFileUploadModal (`components/wiki/WikiFileUploadModal.tsx`)
-**Назначение:** Модальное окно загрузки файлов.
-
-**Функциональность:**
-- Загрузка файлов
-- Предпросмотр файлов
-- Удаление файлов
-
----
-
-#### WikiDeleteConfirmDialog (`components/wiki/WikiDeleteConfirmDialog.tsx`)
-**Назначение:** Диалог подтверждения удаления статьи.
-
-**Функциональность:**
-- Подтверждение удаления
-- Отмена удаления
-
----
-
-#### WikiTagSelector (`components/wiki/WikiTagSelector.tsx`)
-**Назначение:** Селектор тегов для статьи.
-
-**Функциональность:**
-- Выбор существующих тегов
-- Создание новых тегов
-- Удаление тегов
-
----
-
-### AI Chat компоненты
-
-#### ChatHeader (`components/aichat/ChatHeader.tsx`)
-**Назначение:** Заголовок чата с ИИ.
-
-**Функциональность:**
-- Название чата
-- Кнопки действий
-- Настройки чата
-
----
-
-#### ChatHistory (`components/aichat/ChatHistory.tsx`)
-**Назначение:** История чатов с ИИ.
-
-**Функциональность:**
-- Список чатов
-- Создание нового чата
-- Удаление чата
-- Переключение между чатами
-
----
-
-#### ChatMessages (`components/aichat/ChatMessages.tsx`)
-**Назначение:** Сообщения чата с ИИ.
-
-**Функциональность:**
-- Отображение сообщений
-- Разделение сообщений пользователя и ИИ
-- Автоматическая прокрутка
-
----
-
-#### ChatInput (`components/aichat/ChatInput.tsx`)
-**Назначение:** Поле ввода сообщения в чат.
-
-**Функциональность:**
-- Ввод сообщения
-- Отправка сообщения
-- Прикрепление файлов
-
----
-
-#### AnimatedAIInput (`components/aichat/AnimatedAIInput.tsx`)
-**Назначение:** Анимированное поле ввода для ИИ чата.
-
-**Функциональность:**
-- Анимация при вводе
-- Индикатор обработки
-- Специальные эффекты
-
----
-
-### Profile компоненты
-
-#### ProfileNavigation (`components/profile/ProfileNavigation.tsx`)
-**Назначение:** Навигация по вкладкам профиля.
-
-**Функциональность:**
-- Переключение между вкладками
-- Сохранение активной вкладки в localStorage
-
-**Вкладки:**
-- Профиль
-- Интеграции
-- Быстрые кнопки
-
----
-
-#### ProfileInfo (`components/profile/ProfileInfo.tsx`)
-**Назначение:** Информация о пользователе.
-
-**Функциональность:**
-- Отображение информации о пользователе
-- Аватар
-- Контактная информация
-
----
-
-#### ProfileEditForm (`components/profile/ProfileEditForm.tsx`)
-**Назначение:** Форма редактирования профиля.
-
-**Функциональность:**
-- Редактирование информации
-- Валидация полей
-- Сохранение изменений
-
----
-
-#### IntegrationSettingsModal (`components/profile/IntegrationSettingsModal.tsx`)
-**Назначение:** Модальное окно настроек интеграций.
-
-**Функциональность:**
-- Настройка интеграций
-- Управление API ключами
-- Сохранение настроек
-
----
-
-#### IntegrationSettingsForm (`components/profile/IntegrationSettingsForm.tsx`)
-**Назначение:** Форма настроек интеграции.
-
-**Функциональность:**
-- Поля настроек интеграции
-- Валидация
-- Сохранение
-
----
-
-#### IntegrationsPage (`components/profile/IntegrationsPage.tsx`)
-**Назначение:** Страница интеграций в профиле.
-
-**Функциональность:**
-- Список доступных интеграций
-- Настройка интеграций
-- Статус интеграций
-
----
-
-#### QuickButtonsPage (`components/profile/QuickButtonsPage.tsx`)
-**Назначение:** Страница быстрых кнопок.
-
-**Функциональность:**
-- Список быстрых кнопок
-- Добавление кнопки
-- Редактирование кнопки
-- Удаление кнопки
-- Переупорядочивание кнопок
-
----
-
-#### QuickButtonModal (`components/profile/QuickButtonModal.tsx`)
-**Назначение:** Модальное окно создания/редактирования быстрой кнопки.
-
-**Функциональность:**
-- Форма кнопки
-- Настройка действия
-- Сохранение кнопки
-
----
-
-#### UserCard (`components/profile/UserCard.tsx`)
-**Назначение:** Карточка пользователя.
-
-**Функциональность:**
-- Отображение информации о пользователе
-- Быстрые действия
-
----
-
-#### GoogleIntegration (`components/profile/GoogleIntegration.tsx`)
-**Назначение:** Компонент интеграции с Google.
-
-**Функциональность:**
-- Подключение Google аккаунта
-- Отключение интеграции
-- Статус подключения
-
----
-
-#### AccentColorSettings (`components/profile/AccentColorSettings.tsx`)
-**Назначение:** Настройки акцентного цвета.
-
-**Функциональность:**
-- Выбор акцентного цвета
-- Предпросмотр цвета
-- Сохранение цвета
-
----
-
-### Company Settings компоненты
-
-#### GeneralSettings (`components/company-settings/GeneralSettings.tsx`)
-**Назначение:** Общие настройки компании.
-
-**Функциональность:**
-- Настройка основной информации о компании
-- Логотип компании
-- Контактная информация
-
----
-
-#### GradesSettings (`components/company-settings/GradesSettings.tsx`)
-**Назначение:** Настройки грейдов.
-
-**Функциональность:**
-- Список грейдов
-- Создание грейда
-- Редактирование грейда
-- Удаление грейда
-
----
-
-#### GradeForm (`components/company-settings/GradeForm.tsx`)
-**Назначение:** Форма создания/редактирования грейда.
-
-**Функциональность:**
-- Поля грейда
-- Валидация
-- Сохранение
-
----
-
-#### CandidateFieldsSettings (`components/company-settings/CandidateFieldsSettings.tsx`)
-**Назначение:** Настройки дополнительных полей кандидатов.
-
-**Функциональность:**
-- Список полей
-- Создание поля
-- Редактирование поля
-- Удаление поля
-
----
-
-#### ScorecardSettings (`components/company-settings/ScorecardSettings.tsx`)
-**Назначение:** Настройки scorecard.
-
-**Функциональность:**
-- Структура scorecard
-- Критерии оценки
-- Сохранение настроек
-
----
-
-#### EmployeeLifecycleSettings (`components/company-settings/EmployeeLifecycleSettings.tsx`)
-**Назначение:** Настройки жизненного цикла сотрудников.
-
-**Функциональность:**
-- Этапы жизненного цикла
-- Статусы сотрудников
-- Сохранение настроек
-
----
-
-#### RecruitingStagesSettings (`components/company-settings/RecruitingStagesSettings.tsx`)
-**Назначение:** Настройки этапов найма.
-
-**Функциональность:**
-- Список этапов
-- Создание этапа
-- Редактирование этапа
-- Удаление этапа
-- Управление причинами отказа
-
----
-
-#### SLASettings (`components/company-settings/SLASettings.tsx`)
-**Назначение:** Настройки SLA.
-
-**Функциональность:**
-- Список SLA правил
-- Создание правила
-- Редактирование правила
-- Удаление правила
-
 ---
-
-#### SLAEditModal (`components/company-settings/SLAEditModal.tsx`)
-**Назначение:** Модальное окно редактирования SLA.
 
-**Функциональность:**
-- Форма редактирования SLA
-- Валидация
-- Сохранение
+#### Toast и ToastContext — `components/Toast/ToastContext.tsx`, `components/Toast/Toast.tsx`
 
----
-
-#### VacancyPromptSettings (`components/company-settings/VacancyPromptSettings.tsx`)
-**Назначение:** Настройки единого промпта для вакансий.
+Описание см. в разделе [2.5](#25-toastprovider-и-toast--componentstoasttoastcontexttsx-componentstoasttoasttsx).
 
-**Функциональность:**
-- Редактирование промпта
-- Предпросмотр
-- Сохранение
+**Toast.tsx:** Рендер одного уведомления (иконка, заголовок, описание, кнопки действий). Типы: info, success, error, warning, system. Стили `Toast.module.css`.
 
 ---
-
-#### UserAccessModal (`components/company-settings/UserAccessModal.tsx`)
-**Назначение:** Модальное окно управления доступом пользователя.
-
-**Функциональность:**
-- Настройка прав доступа
-- Группы доступа
-- Сохранение настроек
 
----
+#### GlobalSearch — `components/GlobalSearch/GlobalSearch.tsx`
 
-#### GroupAccessModal (`components/company-settings/GroupAccessModal.tsx`)
-**Назначение:** Модальное окно управления доступом группы.
+**Назначение:** Глобальный поиск (горячая клавиша Cmd+S / Ctrl+S в Header).
 
-**Функциональность:**
-- Настройка прав доступа группы
-- Сохранение настроек
+**Пропсы:** `placeholder`, `shortcutHint`, `dark`, `onSearch`, `onEntityClick` (и др. при необходимости). Статус: в разработке; при активации может показываться toast. Стили `GlobalSearch.module.css`.
 
 ---
 
-### Finance компоненты
+#### FloatingLabelInput — `components/FloatingLabelInput.tsx`
 
-#### CurrencyRatesSection (`components/finance/CurrencyRatesSection.tsx`)
-**Назначение:** Секция курсов валют.
+**Назначение:** Поле ввода с плавающим лейблом (для форм логина, восстановления пароля и т.д.).
 
-**Функциональность:**
-- Список валют
-- Курсы валют
-- Редактирование курсов
+**Пропсы:** стандартные для input + label, возможно `error`, `required`. Используется в формах аккаунта.
 
 ---
-
-#### GradesSection (`components/finance/GradesSection.tsx`)
-**Назначение:** Секция грейдов в финансовом разделе.
 
-**Функциональность:**
-- Список грейдов
-- Финансовая информация по грейдам
-
----
+#### QuickButtonsContext — `components/QuickButtonsContext.tsx`
 
-#### TaxesSection (`components/finance/TaxesSection.tsx`)
-**Назначение:** Секция налогов.
+**Назначение:** Контекст быстрых кнопок для FloatingActions: список кнопок, включение/выключение, синхронизация с localStorage/профилем.
 
-**Функциональность:**
-- Настройка налогов
-- Налоговые ставки
-- Сохранение настроек
+**Использование:** Обеспечивает данные для FloatingActions и страницы настроек быстрых кнопок.
 
 ---
 
-### Candidate Responses компоненты
+### 4.2. Workflow — `components/workflow/`
 
-#### GeneralTemplatesTab (`components/candidate-responses/GeneralTemplatesTab.tsx`)
-**Назначение:** Вкладка общих шаблонов ответов.
+| Компонент | Назначение | Основное |
+|-----------|------------|----------|
+| **WorkflowHeader** | Шапка страницы workflow: быстрые ссылки, выбор вакансии, кнопки Календарь, Вакансия, слоты, Обновить | data-tour атрибуты для тура, тогглер этапа (Скрининг/Интервью) |
+| **WorkflowChat** | Чат с данными по кандидатам | Сообщения, ввод, отображение структурированных данных |
+| **WorkflowSidebar** | Боковая панель: отчёты по этапам, вики, быстрые действия | data-tour="workflow-sidebar" |
+| **SlotsPanel** | Панель слотов (модальная или выдвижная): копирование слотов, назначение | Открывается из WorkflowHeader |
 
-**Функциональность:**
-- Список общих шаблонов
-- Создание шаблона
-- Редактирование шаблона
-- Удаление шаблона
+Стили: `WorkflowHeader.module.css`, `WorkflowChat.module.css`, `WorkflowSidebar.module.css`, `SlotsPanel.module.css`.
 
 ---
 
-#### GradeTemplatesTab (`components/candidate-responses/GradeTemplatesTab.tsx`)
-**Назначение:** Вкладка шаблонов по грейдам.
+### 4.3. Вакансии — `components/vacancies/`
 
-**Функциональность:**
-- Список шаблонов по грейдам
-- Создание шаблона для грейда
-- Редактирование шаблона
-- Удаление шаблона
+| Компонент | Назначение |
+|-----------|------------|
+| **VacanciesSearchFilters** | Поиск и фильтры списка вакансий (рекрутер, статус: все/активные/неактивные) |
+| **VacanciesStats** | Счётчики: всего, активные, неактивные |
+| **VacancyCard** | Карточка вакансии (вид сетки) |
+| **VacancyListItem** | Элемент списка вакансии (вид списка) |
+| **AddVacancyModal** | Модальное окно создания вакансии; форма с полями; используется также из StatusBar |
+| **VacancyEditModal** | Модальное окно редактирования вакансии |
+| **VacancyDetailHeader** | Заголовок детальной страницы вакансии с действиями |
+| **BasicInfoSection** | Блок основной информации на детальной странице |
+| **AnalysisPromptSection** | Блок промпта для анализа |
+| **InterviewersSection** | Блок интервьюеров |
+| **SalaryRangesSection** | Блок зарплатных вилок |
+| **TransferStagesSection** | Блок этапов переноса |
+| **RelatedSections** | Связанные разделы |
 
----
-
-#### SlotsTab (`components/candidate-responses/SlotsTab.tsx`)
-**Назначение:** Вкладка управления слотами.
+**Редактирование вакансии** (`components/vacancies/edit/`): BasicInfoEditSection, AnalysisPromptEditSection, InterviewersEditSection, SalaryRangesEditSection, ScorecardEditSection, TransferStagesEditSection, VacancyLinksEditSection, InterviewQuestionsEditSection — секции формы редактирования на странице `/vacancies/[id]/edit`.
 
-**Функциональность:**
-- Список слотов
-- Настройка слотов
-- Сохранение настроек
+Соответствующие `.module.css` для каждого компонента.
 
 ---
 
-#### RejectionTemplateForm (`components/candidate-responses/RejectionTemplateForm.tsx`)
-**Назначение:** Форма шаблона отказа.
+### 4.4. Зарплатные вилки — `components/salary-ranges/`
 
-**Функциональность:**
-- Редактирование шаблона отказа
-- Предпросмотр
-- Сохранение
+| Компонент | Назначение |
+|-----------|------------|
+| **SalaryRangesSearchFilters** | Фильтры списка зарплатных вилок |
+| **SalaryRangesStats** | Статистика по вилкам |
+| **SalaryRangeCard** | Карточка вилки |
+| **SalaryRangeListItem** | Элемент списка вилки |
+| **CreateSalaryRangeModal** | Создание новой вилки |
+| **SalaryRangeDetailModal** | Детальный просмотр/редактирование вилки в модалке |
 
 ---
 
-### Invites компоненты
+### 4.5. Заявки (requests) — `components/requests/`
 
-#### InvitesStats (`components/invites/InvitesStats.tsx`)
-**Назначение:** Статистика по инвайтам.
+| Компонент | Назначение |
+|-----------|------------|
+| **RequestsSearchFilters** | Фильтры заявок на подбор |
+| **RequestsStats** | Статистика по заявкам |
+| **RequestCard** | Карточка заявки |
+| **RequestListItem** | Элемент списка заявки |
+| **RequestTableRow** | Строка таблицы заявки |
+| **RequestTableRowExpanded** | Развёрнутая строка (детали) |
+| **RequestsTable** | Таблица заявок |
+| **CreateRequestModal** | Создание заявки |
 
-**Функциональность:**
-- Общее количество инвайтов
-- Количество по статусам
-- Другие метрики
-
 ---
 
-#### CreateInviteModal (`components/invites/CreateInviteModal.tsx`)
-**Назначение:** Модальное окно создания инвайта.
+### 4.6. Инвайты — `components/invites/`
 
-**Функциональность:**
-- Форма создания инвайта
-- Валидация полей
-- Сохранение инвайта
+| Компонент | Назначение |
+|-----------|------------|
+| **InvitesStats** | Статистика по инвайтам |
+| **CreateInviteModal** | Создание нового инвайта |
 
 ---
 
-### Вспомогательные компоненты
+### 4.7. AI Chat — `components/aichat/`
 
-#### FloatingLabelInput (`components/FloatingLabelInput.tsx`)
-**Назначение:** Поле ввода с плавающей меткой.
+| Компонент | Назначение |
+|-----------|------------|
+| **ChatHeader** | Заголовок чата ИИ-ассистента |
+| **ChatMessages** | Контейнер сообщений чата |
+| **ChatInput** | Поле ввода сообщения |
+| **ChatHistory** | История чата (боковая панель или список) |
+| **AnimatedAIInput** | Анимированный инпут для ИИ |
+| **FormattedText** | Форматирование текста ответов (markdown и т.д.) |
 
-**Функциональность:**
-- Плавающая метка
-- Валидация
-- Поддержка различных типов полей
-
 ---
 
-#### QuickButtonsContext (`components/QuickButtonsContext.tsx`)
-**Назначение:** Контекст быстрых кнопок.
+### 4.8. Профиль — `components/profile/`
 
-**Функциональность:**
-- Управление состоянием быстрых кнопок
-- Предоставление контекста дочерним компонентам
+| Компонент | Назначение |
+|-----------|------------|
+| **ProfileNavigation** | Вкладки: Профиль, Интеграции, Быстрые кнопки |
+| **ProfileInfo** | Отображение информации о пользователе |
+| **ProfileEditForm** | Форма редактирования профиля |
+| **UserCard** | Карточка пользователя |
+| **IntegrationSettingsModal** | Модальное окно настроек интеграций |
+| **IntegrationSettingsForm** | Форма настроек интеграций |
+| **IntegrationsPage** | Страница/блок интеграций (в профиле) |
+| **AccentColorSettings** | Выбор акцентного цвета темы |
+| **QuickButtonsPage** | Страница настройки быстрых кнопок |
+| **QuickButtonModal** | Модальное окно добавления/редактирования быстрой кнопки |
+| **GoogleIntegration** | Блок интеграции с Google |
 
 ---
-
-## Заключение
 
-Данная документация описывает все компоненты и страницы frontend приложения HR Helper. Каждый компонент и страница имеют свое назначение и функциональность, описанные в соответствующих разделах.
+### 4.9. Настройки компании — `components/company-settings/`
 
-Для получения более детальной информации о конкретном компоненте или странице, обратитесь к исходному коду в соответствующих файлах.
+| Компонент | Назначение |
+|-----------|------------|
+| **GeneralSettings** | Общие настройки компании (логотип, офисы и т.д.) |
+| **GradesSettings** | Настройки грейдов |
+| **GradeForm** | Форма грейда |
+| **RecruitingStagesSettings** | Этапы найма и причины отказа |
+| **RecruitingCommandsSettings** | Команды рекрутинга |
+| **EmployeeLifecycleSettings** | Жизненный цикл сотрудников |
+| **CandidateFieldsSettings** | Дополнительные поля кандидатов |
+| **ScorecardSettings** | Настройки scorecard |
+| **SLASettings** | Настройки SLA |
+| **SLAEditModal** | Редактирование SLA в модалке |
+| **VacancyPromptSettings** | Единый промпт для вакансий |
+| **GroupAccessModal** | Модальное окно доступа группы |
+| **UserAccessModal** | Модальное окно доступа пользователя |
+| **IntegrationScopeModal** | Модальное окно области интеграции (в integrations) |
+
+---
+
+### 4.10. Финансы — `components/finance/`
+
+| Компонент | Назначение |
+|-----------|------------|
+| **CurrencyRatesSection** | Блок курсов валют |
+| **GradesSection** | Блок грейдов в финансовом контексте |
+| **TaxesSection** | Блок налогов |
+
+---
+
+### 4.11. Ответы кандидатам — `components/candidate-responses/`
+
+| Компонент | Назначение |
+|-----------|------------|
+| **GeneralTemplatesTab** | Вкладка общих шаблонов ответов |
+| **GradeTemplatesTab** | Вкладка шаблонов по грейдам |
+| **SlotsTab** | Вкладка слотов (шаблоны слотов) |
+| **RejectionTemplateForm** | Форма шаблона отказа |
+
+---
+
+### 4.12. Вики — `components/wiki/`
+
+| Компонент | Назначение |
+|-----------|------------|
+| **WikiHeader** | Заголовок списка статей, кнопки действий |
+| **WikiFilters** | Фильтры по категориям/тегам |
+| **WikiCategory** | Группа статей по категории |
+| **WikiCard** | Карточка статьи в списке |
+| **WikiDetailHeader** | Заголовок детальной страницы статьи |
+| **WikiDetailContent** | Контент статьи |
+| **WikiDetailSidebar** | Боковая панель на детальной странице |
+| **WikiDetailHistory** | История изменений статьи |
+| **WikiEditForm** | Форма редактирования статьи |
+| **WikiFileUploadModal** | Загрузка файлов к статье |
+| **WikiTagSelector** | Выбор тегов |
+| **WikiDeleteConfirmDialog** | Подтверждение удаления статьи |
+
+---
+
+### 4.13. Telegram — `components/telegram/`
+
+| Компонент | Назначение |
+|-----------|------------|
+| **RichTextInput** | Поле ввода с форматированием текста |
+
+---
+
+### 4.14. Admin — `app/admin/`
+
+| Компонент | Назначение |
+|-----------|------------|
+| **AdminSidebar** | Левое боковое меню админки: Главная, модули из ADMIN_MODULES; фиксированная ширина 280px; открытие/закрытие по `isOpen` (transform translateX) |
+| **config.ts** | `ADMIN_MODULES` — массив модулей с id, label, description, items (href, label). Используется в Sidebar для adminMainPages и в AdminSidebar для навигации. |
+
+Стили: `app/admin/admin.module.css` (adminSidebar, adminWrap, content, cardLink, dashboardCard, sidebarModuleLabel).
+
+---
+
+## Сводная таблица маршрутов (все page.tsx)
+
+| Маршрут | Файл |
+|---------|------|
+| `/` | app/page.tsx |
+| `/workflow` | app/workflow/page.tsx |
+| `/recr-chat` | app/recr-chat/page.tsx |
+| `/invites` | app/invites/page.tsx |
+| `/invites/[id]` | app/invites/[id]/page.tsx |
+| `/invites/[id]/edit` | app/invites/[id]/edit/page.tsx |
+| `/interviewers` | app/interviewers/page.tsx |
+| `/hiring-requests` | app/hiring-requests/page.tsx |
+| `/vacancies` | app/vacancies/page.tsx |
+| `/vacancies/[id]` | app/vacancies/[id]/page.tsx |
+| `/vacancies/[id]/edit` | app/vacancies/[id]/edit/page.tsx |
+| `/vacancies/salary-ranges` | app/vacancies/salary-ranges/page.tsx |
+| `/vacancies/salary-ranges/[id]` | app/vacancies/salary-ranges/[id]/page.tsx |
+| `/finance` | app/finance/page.tsx |
+| `/finance/benchmarks` | app/finance/benchmarks/page.tsx |
+| `/calendar` | app/calendar/page.tsx |
+| `/huntflow` | app/huntflow/page.tsx |
+| `/aichat` | app/aichat/page.tsx |
+| `/telegram` | app/telegram/page.tsx |
+| `/telegram/chats` | app/telegram/chats/page.tsx |
+| `/telegram/2fa` | app/telegram/2fa/page.tsx |
+| `/wiki` | app/wiki/page.tsx |
+| `/wiki/[id]` | app/wiki/[id]/page.tsx |
+| `/wiki/[id]/edit` | app/wiki/[id]/edit/page.tsx |
+| `/reporting` | app/reporting/page.tsx |
+| `/reporting/hiring-plan` | app/reporting/hiring-plan/page.tsx |
+| `/reporting/hiring-plan/yearly` | app/reporting/hiring-plan/yearly/page.tsx |
+| `/reporting/company` | app/reporting/company/page.tsx |
+| `/candidate-responses` | app/candidate-responses/page.tsx |
+| `/search` | app/search/page.tsx |
+| `/account/login` | app/account/login/page.tsx |
+| `/account/forgot-password` | app/account/forgot-password/page.tsx |
+| `/account/reset-password` | app/account/reset-password/page.tsx |
+| `/account/profile` | app/account/profile/page.tsx |
+| `/company-settings` | app/company-settings/page.tsx |
+| + все подразделы company-settings (org-structure, grades, finance, employee-lifecycle, integrations, user-groups, users, recruiting/*, scorecard, sla, vacancy-prompt, candidate-fields) | app/company-settings/.../page.tsx |
+| `/admin` | app/admin/page.tsx |
+| `/admin/users` | app/admin/users/page.tsx |
+| `/admin/groups` | app/admin/groups/page.tsx |
+| `/errors/401` | app/errors/401/page.tsx |
+| `/errors/402` | app/errors/402/page.tsx |
+| `/errors/404` | app/errors/404/page.tsx |
+| `/errors/500` | app/errors/500/page.tsx |
+| `/errors/forbidden` | app/errors/forbidden/page.tsx |
+| (not found) | app/not-found.tsx |
+
+---
+
+*Документ актуален на момент описания структуры приложения. При добавлении новых страниц или компонентов разделы 3 и 4 следует дополнять по той же схеме.*

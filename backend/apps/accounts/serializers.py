@@ -36,7 +36,8 @@ class UserSerializer(serializers.ModelSerializer):
     - Может вызываться из: User API viewsets
     """
     groups = serializers.StringRelatedField(many=True, read_only=True)
-    
+    full_name = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
@@ -45,6 +46,9 @@ class UserSerializer(serializers.ModelSerializer):
             'is_staff', 'is_superuser', 'groups'
         ]
         read_only_fields = ['id', 'date_joined', 'last_login', 'is_staff', 'is_superuser']
+
+    def get_full_name(self, obj):
+        return obj.get_full_name() or ''
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -84,7 +88,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'username', 'email', 'password', 'password_confirm',
-            'first_name', 'last_name', 'full_name', 'telegram_username'
+            'first_name', 'last_name', 'telegram_username'
         ]
     
     def validate(self, attrs):
@@ -131,7 +135,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
     - Передает данные в: DRF API responses
     - Может вызываться из: User API viewsets (profile actions)
     """
-    
+    full_name = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
@@ -139,6 +144,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'telegram_username', 'date_joined', 'last_login'
         ]
         read_only_fields = ['id', 'username', 'date_joined', 'last_login']
+
+    def get_full_name(self, obj):
+        return obj.get_full_name() or ''
 
 
 class UserChangePasswordSerializer(serializers.Serializer):

@@ -198,12 +198,26 @@
                         <form method="GET" id="vacancyForm">
                             <select name="vacancy_id" class="form-select" onchange="this.form.submit()">
                                 <option value="">-- Выберите вакансию --</option>
-                                {% for vacancy in active_vacancies %}
-                                    <option value="{{ vacancy.id }}" 
-                                            {% if selected_vacancy and vacancy.id == selected_vacancy.id %}selected{% endif %}>
-                                        {{ vacancy.name }}
-                                    </option>
-                                {% endfor %}
+                                {% if main_vacancies %}
+                                <optgroup label="Мои вакансии">
+                                    {% for vacancy in main_vacancies %}
+                                    <option value="{{ vacancy.id }}" {% if selected_vacancy and vacancy.id == selected_vacancy.id %}selected{% endif %}>{{ vacancy.name }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                                {% endif %}
+                                {% if main_vacancies and additional_vacancies %}
+                                <optgroup label="Дополнительные">
+                                    {% for vacancy in additional_vacancies %}
+                                    <option value="{{ vacancy.id }}" {% if selected_vacancy and vacancy.id == selected_vacancy.id %}selected{% endif %}>{{ vacancy.name }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                                {% elif additional_vacancies %}
+                                <optgroup label="Дополнительные">
+                                    {% for vacancy in additional_vacancies %}
+                                    <option value="{{ vacancy.id }}" {% if selected_vacancy and vacancy.id == selected_vacancy.id %}selected{% endif %}>{{ vacancy.name }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                                {% endif %}
                             </select>
                         </form>
                         {% if selected_vacancy %}

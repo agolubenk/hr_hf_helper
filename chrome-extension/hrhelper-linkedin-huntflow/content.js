@@ -11,7 +11,7 @@ const IS_GOOGLE_MEET = location.href.includes('meet.google.com');
 const IS_GOOGLE_CALENDAR_EVENT_EDIT = location.href.includes('calendar.google.com') && location.href.includes('/eventedit/');
 const log = (...args) => (DEBUG || IS_GOOGLE_CALENDAR || IS_GOOGLE_MEET) && console.log('[HRHelper]', ...args);
 const warn = (...args) => (DEBUG || IS_GOOGLE_CALENDAR || IS_GOOGLE_MEET) && console.warn('[HRHelper]', ...args);
-const logError = (...args) => console.logError('[HRHelper]', ...args);
+const logError = (...args) => console.error('[HRHelper]', ...args);
 
 const MAX_WIDGETS = 2;
 const IS_MESSAGING_PAGE = location.href.includes('/messaging/');
@@ -93,12 +93,14 @@ function extractThreadIdFromMessageButton() {
     }
   }
 
-  // Ищем в кнопке Message - пробуем разные селекторы
+  // Ищем в кнопке Message / Отправить сообщение - пробуем разные селекторы
   const messageBtnSelectors = [
     'button[aria-label*="Message"]',
     'button[aria-label*="message"]',
     'button[aria-label*="Сообщение"]',
     'button[aria-label*="сообщение"]',
+    'button[aria-label*="Отправить сообщение"]',
+    'button[aria-label*="отправить сообщение"]',
     'a[href*="/messaging/"]',
     '[data-control-name="send_inmail"]',
     '[data-control-name="message"]'
@@ -359,38 +361,36 @@ function findMessagingComposer() {
   return null;
 }
 
-function findAllMoreButtons() {
-  const ariaNeedles = ["more", "more actions", "ещё", "еще", "дополнительно"];
-  const buttons = Array.from(document.querySelectorAll("button[aria-label], [role='button'][aria-label]"));
+/** Находит кнопку Message / Отправить сообщение на странице профиля (в шапке). Виджет вставляем сразу после неё. */
+function findMessageButtonsOnProfile() {
+  const messageNeedles = ["message", "сообщение", "отправить сообщение", "send message"];
+  const buttons = Array.from(document.querySelectorAll("button[aria-label], [role='button'][aria-label], a[href*='/messaging/']"));
   const res = [];
   for (const el of buttons) {
     const aria = (el.getAttribute("aria-label") || "").trim().toLowerCase();
-    const txt = (el.textContent || "").trim().toLowerCase();
-    if ((aria && ariaNeedles.some(n => aria.includes(n))) || ariaNeedles.some(n => txt.includes(n))) {
-      res.push(el);
-    }
+    const text = (el.textContent || "").trim().toLowerCase();
+    const isMessage = messageNeedles.some(n => aria.includes(n) || text.includes(n));
+    const isMessageLink = el.href && el.href.includes("/messaging/");
+    if (!isMessage && !isMessageLink) continue;
+    // Шапка профиля или любая область с кнопками в верхней части (LinkedIn может менять классы)
+    const inTop = !!el.closest('[data-view-name="profile-top-card"]') ||
+                  !!el.closest(".pv-top-card") ||
+                  !!el.closest(".pv-top-card-v2-ctas") ||
+                  !!el.closest(".pv-top-card__actions") ||
+                  !!el.closest(".scaffold-layout__sticky") ||
+                  !!el.closest("main");
+    if (inTop) res.push(el);
   }
   return Array.from(new Set(res));
 }
 
-function looksLikeProfileActionArea(moreBtn) {
-  const inTop = !!moreBtn.closest('[data-view-name="profile-top-card"]') ||
-                !!moreBtn.closest(".pv-top-card") ||
-                !!moreBtn.closest(".pv-top-card-v2-ctas") ||
-                !!moreBtn.closest(".pv-top-card__actions");
-  const inSticky = !!moreBtn.closest(".scaffold-layout__sticky");
-  if (inTop || inSticky) return true;
-
-  const root = moreBtn.closest("header") || moreBtn.closest("section");
-  if (!root) return false;
-
-  const needles = ["connect", "message", "follow", "соедин", "сообщ"];
-  const nearby = Array.from(root.querySelectorAll("button[aria-label]")).slice(0, 40);
-  for (const b of nearby) {
-    const aria = (b.getAttribute("aria-label") || "").toLowerCase();
-    if (needles.some(n => aria.includes(n))) return true;
-  }
-  return false;
+/** Fallback: найти контейнер с кнопками в шапке профиля и последнюю кнопку (или контейнер), чтобы вставить виджет после. */
+function getProfileActionFallbackAnchor() {
+  const container = findActionContainer();
+  if (!container) return null;
+  const buttons = Array.from(container.querySelectorAll("button, [role='button'], a[href*='/messaging/']")).filter(el => el.offsetParent !== null);
+  const anchor = buttons.length > 0 ? buttons[buttons.length - 1] : (container.lastElementChild || container);
+  return { container, anchor };
 }
 
 function findActionContainer() {
@@ -417,7 +417,7 @@ function createWidget(anchorEl, container, isMessaging = false) {
     // На странице messaging — блок над формой ввода
     wrapper.style.cssText = "padding:12px 16px;border-bottom:1px solid rgba(0,0,0,.08);background:#f3f6f8;display:flex;align-items:center;gap:8px;position:relative;";
   } else {
-    // На странице профиля — inline рядом с кнопкой More
+    // На странице профиля — inline сразу после кнопки Message / Отправить сообщение
     wrapper.style.cssText = "margin-left:8px;display:inline-flex;align-items:center;gap:6px;position:relative;";
   }
 
@@ -509,8 +509,10 @@ function createWidget(anchorEl, container, isMessaging = false) {
     // Вставляем ПЕРЕД формой ввода
     container.insertBefore(wrapper, container.firstChild);
   } else {
-    // Вставляем после кнопки More
-    container.insertBefore(wrapper, anchorEl.nextSibling);
+    // Вставляем сразу после якоря (Message или последняя кнопка в блоке действий)
+    const next = anchorEl ? anchorEl.nextSibling : null;
+    if (next) container.insertBefore(wrapper, next);
+    else container.appendChild(wrapper);
   }
 
   return { wrapper, btn, input, inputGroup, saveBtn, cancelBtn, editBtn, copyBtn, statusBtn, statusDropdown };
@@ -662,34 +664,47 @@ function ensureButtons() {
         updateWidget(widgets, true);
       }
     } else {
-      // На странице профиля — вставляем рядом с кнопками More
-      let moreButtons = findAllMoreButtons().filter(looksLikeProfileActionArea);
-      if (!moreButtons.length) return;
+      // Только на LinkedIn: профиль или любая страница с кнопками
+      if (!location.href.includes('linkedin.com')) return;
 
-      moreButtons = moreButtons.map(b => {
-        const inTop = !!b.closest('[data-view-name="profile-top-card"]') ||
-                      !!b.closest(".pv-top-card") ||
-                      !!b.closest(".pv-top-card__actions") ||
-                      !!b.closest(".pv-top-card-v2-ctas");
-        const inSticky = !!b.closest(".scaffold-layout__sticky");
-        return { b, weight: inTop ? 0 : inSticky ? 1 : 2 };
-      }).sort((x, y) => x.weight - y.weight).slice(0, MAX_WIDGETS).map(x => x.b);
+      // На странице профиля — вставляем сразу после кнопки Message / Отправить сообщение
+      let messageButtons = findMessageButtonsOnProfile().slice(0, MAX_WIDGETS);
 
-      moreButtons.forEach(moreBtn => {
-        if (STATE.buttons.has(moreBtn)) {
-          const existing = STATE.buttons.get(moreBtn);
+      // Fallback: если кнопку Message не нашли (новый дизайн LinkedIn), вставляем в конец блока действий
+      if (!messageButtons.length) {
+        const fallback = getProfileActionFallbackAnchor();
+        if (!fallback) return;
+        const { container, anchor } = fallback;
+        const key = anchor;
+        if (STATE.buttons.has(key)) {
+          const existing = STATE.buttons.get(key);
           if (existing?.wrapper?.isConnected) {
-            updateWidget(existing, false); // false = не force, только если изменилось
+            updateWidget(existing, false);
             return;
           }
-          STATE.buttons.delete(moreBtn);
+          STATE.buttons.delete(key);
+        }
+        const widgets = createWidget(anchor, container, false);
+        STATE.buttons.set(key, widgets);
+        updateWidget(widgets, true);
+        return;
+      }
+
+      messageButtons.forEach(msgBtn => {
+        if (STATE.buttons.has(msgBtn)) {
+          const existing = STATE.buttons.get(msgBtn);
+          if (existing?.wrapper?.isConnected) {
+            updateWidget(existing, false);
+            return;
+          }
+          STATE.buttons.delete(msgBtn);
         }
 
-        const container = moreBtn?.parentElement || findActionContainer();
+        const container = msgBtn?.parentElement || findActionContainer();
         if (!container) return;
 
-        const widgets = createWidget(moreBtn, container, false);
-        STATE.buttons.set(moreBtn, widgets);
+        const widgets = createWidget(msgBtn, container, false);
+        STATE.buttons.set(msgBtn, widgets);
         updateWidget(widgets, true);
       });
     }

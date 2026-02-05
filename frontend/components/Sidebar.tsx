@@ -34,7 +34,7 @@
 
 'use client'
 
-import { Flex, Box, Text, Separator } from "@radix-ui/themes"
+import { Flex, Box, Text, Separator, DropdownMenu, IconButton } from "@radix-ui/themes"
 import { 
   ChevronDownIcon, 
   ChevronUpIcon,
@@ -59,11 +59,12 @@ import {
   ChatBubbleIcon,
   Cross2Icon
 } from "@radix-ui/react-icons"
-import { useState, ReactNode, useEffect } from "react"
+import { useState, ReactNode, useEffect, useCallback } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import styles from './Sidebar.module.css'
 import { useTheme } from "@/components/ThemeProvider"
 import { useToast } from "@/components/Toast/ToastContext"
+import { ADMIN_MODULES } from "@/app/admin/config"
 
 /**
  * IN_DEVELOPMENT_IDS - множество ID пунктов меню, которые находятся в разработке
@@ -79,12 +80,16 @@ import { useToast } from "@/components/Toast/ToastContext"
  * - company-settings-benchmark: настройки бенчмарков
  * - admin: административная панель
  */
+/** Ключ localStorage для сохранения выбранной главной страницы (кнопка «Главная»). */
+const SIDEBAR_HOME_HREF_KEY = 'sidebarHomeHref'
+/** Ключ localStorage для сохранения главной страницы админки (кнопка «Admin CRM»). */
+const SIDEBAR_ADMIN_HOME_HREF_KEY = 'sidebarAdminHomeHref'
+
 const IN_DEVELOPMENT_IDS = new Set([
   'benchmarks-dashboard',
   'integrations-clickup', 'integrations-notion', 'integrations-hh', 'integrations-n8n',
   'reporting-recruiter', 'reporting-vacancy', 'reporting-interviewer', 'reporting-funnel',
   'company-settings-benchmark',
-  'admin',
 ])
 
 /**
@@ -226,7 +231,7 @@ function isItemOrChildrenActive(item: MenuItem, pathname: string | null | undefi
   if (item.id === 'reporting' && pathname.startsWith('/reporting')) {
     return true
   }
-  // 'recr-chat' активен на странице Talent Pool
+  // 'recr-chat' активен на странице ATS | Talent Pool
   if (item.id === 'recr-chat' && pathname.startsWith('/recr-chat')) {
     return true
   }
@@ -509,6 +514,7 @@ function MenuItemComponent({ item, isActive = false, level = 0, onNavigate, path
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   // Хук для получения текущей темы
   const { theme } = useTheme()
+  const router = useRouter()
   // Получение текущего пути для определения активных пунктов
   const pathname = usePathname()
   // Хук для отображения уведомлений
@@ -541,6 +547,36 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
    * - Обработки кликов на пункты из IN_DEVELOPMENT_IDS
    */
   const handleInDevClick = () => toast.showInfo('В разработке', 'Данная страница или функциональность в разработке.')
+
+  /**
+   * homeHref - выбранная главная страница для кнопки «Главная».
+   * Читается из localStorage при монтировании; выбор в выпадающем списке только сохраняет значение, без перехода.
+   */
+  const [homeHref, setHomeHref] = useState('/workflow')
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const stored = localStorage.getItem(SIDEBAR_HOME_HREF_KEY)
+    if (stored) setHomeHref(stored)
+  }, [])
+  const setHomeHrefAndSave = useCallback((href: string) => {
+    setHomeHref(href)
+    if (typeof window !== 'undefined') localStorage.setItem(SIDEBAR_HOME_HREF_KEY, href)
+  }, [])
+
+  /**
+   * adminHomeHref - выбранная главная страница админки для пункта «Admin CRM».
+   * Читается из localStorage; выбор в выпадающем списке только сохраняет значение, без перехода.
+   */
+  const [adminHomeHref, setAdminHomeHref] = useState('/admin')
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const stored = localStorage.getItem(SIDEBAR_ADMIN_HOME_HREF_KEY)
+    if (stored) setAdminHomeHref(stored)
+  }, [])
+  const setAdminHomeHrefAndSave = useCallback((href: string) => {
+    setAdminHomeHref(href)
+    if (typeof window !== 'undefined') localStorage.setItem(SIDEBAR_ADMIN_HOME_HREF_KEY, href)
+  }, [])
   
   /**
    * menuItems - основная структура меню навигации
@@ -553,7 +589,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
    * Разделы меню:
    * - Главная: переход на /workflow
    * - Календарь: переход на /calendar
-   * - Рекрутинг: раздел с подпунктами (Talent Pool, Инвайты, Вакансии, Интервьюеры)
+   * - Рекрутинг: раздел с подпунктами (ATS | Talent Pool, Интервью, Вакансии, Интервьюеры)
    * - Финансы: раздел с подпунктами (Зарплатные вилки, Бенчмарки)
    * - Интеграции: раздел с подпунктами (Huntflow, AI Chat, Telegram и т.д.)
    * - Вики: переход на /wiki
@@ -581,13 +617,13 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       children: [
         {
           id: 'recr-chat',
-          label: 'Talent Pool',
+          label: 'ATS | Talent Pool',
           icon: <ChatBubbleIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
           href: '/recr-chat',
         },
         {
           id: 'invites',
-          label: 'Инвайты',
+          label: 'Интервью',
           icon: <EnvelopeClosedIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
           href: '/invites',
         },
@@ -947,10 +983,55 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     },
     {
       id: 'admin',
-      label: 'Admin-панель',
+      label: 'Admin CRM',
       icon: <GearIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />,
-      external: true,
+      href: '/admin',
     },
+  ]
+
+  /**
+   * mainPagesByBlock - главные страницы по блокам приложения для выпадающего списка «Настройки главной»
+   * Используется в кнопке рядом с пунктом «Главная» для быстрого перехода на главную страницу любого блока.
+   */
+  const mainPagesByBlock: { blockLabel: string; items: { label: string; href: string }[] }[] = [
+    { blockLabel: 'ATS', items: [{ label: 'Workflow', href: '/workflow' }] },
+    {
+      blockLabel: 'Рекрутинг',
+      items: [
+        { label: 'ATS | Talent Pool', href: '/recr-chat' },
+        { label: 'Интервью', href: '/invites' },
+        { label: 'Вакансии', href: '/vacancies' },
+        { label: 'Заявки', href: '/hiring-requests' },
+        { label: 'Интервьюеры', href: '/interviewers' },
+      ],
+    },
+    { blockLabel: 'Календарь', items: [{ label: 'Календарь', href: '/calendar' }] },
+    { blockLabel: 'Вики', items: [{ label: 'Вики', href: '/wiki' }] },
+    {
+      blockLabel: 'Отчетность',
+      items: [
+        { label: 'Главная', href: '/reporting' },
+        { label: 'План найма', href: '/reporting/hiring-plan' },
+        { label: 'По компании', href: '/reporting/company' },
+        { label: 'По рекрутеру', href: '/reporting/recruiter' },
+        { label: 'По вакансии', href: '/reporting/vacancy' },
+        { label: 'По интервьюеру', href: '/reporting/interviewer' },
+        { label: 'Воронка', href: '/reporting/funnel' },
+      ],
+    },
+    {
+      blockLabel: 'Финансы',
+      items: [
+        { label: 'Зарплатные вилки', href: '/vacancies/salary-ranges' },
+        { label: 'Бенчмарки', href: '/finance/benchmarks' },
+      ],
+    },
+  ]
+
+  /** Главные страницы админки для выпадающего списка рядом с пунктом «Admin CRM». */
+  const adminMainPages: { label: string; href: string }[] = [
+    { label: 'Главная админки', href: '/admin' },
+    ...ADMIN_MODULES.flatMap((m) => m.items),
   ]
 
   /**
@@ -999,7 +1080,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
            * - Используется для подсветки активного пункта
            */
           let isActive = pathname === item.href || 
-            (item.id === 'home' && pathname === '/workflow') ||
+            (item.id === 'home' && pathname === homeHref) ||
             (item.id === 'wiki' && pathname?.startsWith('/wiki')) ||
             (item.id === 'calendar' && pathname?.startsWith('/calendar')) ||
             (item.id === 'recruiting' && (
@@ -1027,6 +1108,54 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               pathname?.startsWith('/telegram')
             ))
           
+          const isHome = item.id === 'home'
+
+          if (isHome) {
+            const homeItem = { ...item, href: homeHref }
+            return (
+              <Flex key={item.id} align="center" gap="2" pr="3" style={{ alignItems: 'center' }}>
+                <Box style={{ flex: 1, minWidth: 0 }}>
+                  <MenuItemComponent
+                    item={homeItem}
+                    isActive={isActive}
+                    onNavigate={onClose}
+                    pathname={pathname}
+                    inDevelopment={IN_DEVELOPMENT_IDS.has(item.id)}
+                    onInDevelopmentClick={handleInDevClick}
+                  />
+                </Box>
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger>
+                    <IconButton
+                      size="1"
+                      variant="ghost"
+                      title="Настройки главной страницы"
+                      style={{ color: 'var(--gray-12)', opacity: 0.7, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <GearIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />
+                    </IconButton>
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Content align="end" style={{ minWidth: 220 }}>
+                    {mainPagesByBlock.map((block) => (
+                      <DropdownMenu.Group key={block.blockLabel}>
+                        <DropdownMenu.Label>{block.blockLabel}</DropdownMenu.Label>
+                        {block.items.map((page) => (
+                          <DropdownMenu.Item
+                            key={page.href}
+                            onSelect={() => setHomeHrefAndSave(page.href)}
+                          >
+                            {page.label}
+                          </DropdownMenu.Item>
+                        ))}
+                      </DropdownMenu.Group>
+                    ))}
+                  </DropdownMenu.Content>
+                </DropdownMenu.Root>
+              </Flex>
+            )
+          }
+
           return (
             <MenuItemComponent
               key={item.id}
@@ -1074,6 +1203,49 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           } else if (item.id === 'company-settings' && pathname?.startsWith('/company-settings')) {
             // Для настроек компании проверяем путь и дочерние элементы
             isActive = isItemOrChildrenActive(item, pathname)
+          } else if (item.id === 'admin' && pathname?.startsWith('/admin')) {
+            isActive = true
+          }
+
+          if (item.id === 'admin') {
+            const adminItem = { ...item, href: adminHomeHref }
+            return (
+              <Flex key={item.id} align="center" gap="2" pr="3" style={{ alignItems: 'center' }}>
+                <Box style={{ flex: 1, minWidth: 0 }}>
+                  <MenuItemComponent
+                    item={adminItem}
+                    isActive={isActive}
+                    onNavigate={onClose}
+                    pathname={pathname}
+                    inDevelopment={IN_DEVELOPMENT_IDS.has(item.id)}
+                    onInDevelopmentClick={handleInDevClick}
+                  />
+                </Box>
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger>
+                    <IconButton
+                      size="1"
+                      variant="ghost"
+                      title="Настройки главной страницы админки"
+                      style={{ color: 'var(--gray-12)', opacity: 0.7, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <GearIcon width={16} height={16} style={{ color: 'var(--gray-12)' }} />
+                    </IconButton>
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Content align="end" style={{ minWidth: 220 }}>
+                    {adminMainPages.map((page) => (
+                      <DropdownMenu.Item
+                        key={page.href}
+                        onSelect={() => setAdminHomeHrefAndSave(page.href)}
+                      >
+                        {page.label}
+                      </DropdownMenu.Item>
+                    ))}
+                  </DropdownMenu.Content>
+                </DropdownMenu.Root>
+              </Flex>
+            )
           }
           
           return (

@@ -15,7 +15,19 @@
                             Интервьюеры
                         </h5>
                     </div>
-                    <div class="col-auto">
+                    <div class="col-auto d-flex flex-wrap align-items-center gap-2">
+                        <a href="{% url 'interviewers:export_interviewers_json' %}" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-file-export me-1"></i>
+                            Экспорт JSON
+                        </a>
+                        <form action="{% url 'interviewers:import_interviewers_json' %}" method="post" enctype="multipart/form-data" class="d-inline">
+                            {% csrf_token %}
+                            <input type="file" name="file" accept=".json,application/json" class="d-none" id="import-json-file">
+                            <label class="btn btn-outline-secondary btn-sm mb-0" for="import-json-file">
+                                <i class="fas fa-file-import me-1"></i>
+                                Импорт JSON
+                            </label>
+                        </form>
                         <a href="{% url 'interviewers:interviewer_create' %}" class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>
                             Добавить интервьюера
@@ -275,6 +287,17 @@ document.querySelectorAll('.delete-interviewer').forEach(button => {
         }
     });
 });
+
+// Импорт JSON: при выборе файла сразу отправляем форму
+(function() {
+    const fileInput = document.getElementById('import-json-file');
+    const form = fileInput && fileInput.closest('form');
+    if (fileInput && form) {
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files.length) form.submit();
+        });
+    }
+})();
 
 // Функция для показа уведомлений
 function showAlert(type, message) {

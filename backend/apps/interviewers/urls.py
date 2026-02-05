@@ -9,6 +9,8 @@ urlpatterns = [
     
     # CRUD операции
     path('list/', views.interviewer_list, name='interviewer_list'),
+    path('list/export-json/', views.export_interviewers_json, name='export_interviewers_json'),
+    path('list/import-json/', views.import_interviewers_json, name='import_interviewers_json'),
     path('create/', views.interviewer_create, name='interviewer_create'),
     path('<int:pk>/', views.interviewer_detail, name='interviewer_detail'),
     path('<int:pk>/edit/', views.interviewer_edit, name='interviewer_edit'),
